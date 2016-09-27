@@ -11,8 +11,8 @@ var socketHttp = http.createServer(function(request,response){
 });
 
 socketHttp.listen(3000,function(){
-	var r = new Room();
-	console.log(r.isRoomAvailable());
+	//var r = new Room();
+	//console.log(r.isRoomAvailable());
    console.log("server listenting on port 3000");
 });
 
@@ -30,4 +30,17 @@ wsServer.on('request',function(request){
 		
 					
 	})
+
+	var testData = {
+		"response":{
+			"type":"greet",
+			"data":{
+				"round":"1",
+			}
+		}
+	
+	}
+
+	connection.sendUTF(JSON.stringify(testData));
+
 });
