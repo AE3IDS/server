@@ -14,7 +14,7 @@ Room.prototype.getRoomDetails = function getRoomDetails(){
 	return {"round":this_roundNum,"players":this._players.length}
 }
 
-Room.prototype.checkPlayerWithId(userId){
+Room.prototype.checkPlayerWithId = function checkPlayerWithId(userId){
 
 	var filtered = this._players.filter(function(val){
 				return val.getUserId() == userId
