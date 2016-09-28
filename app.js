@@ -3,6 +3,9 @@ var http = require('http');
 var fs = require('fs');
 var socketServer = require('websocket').server;
 var Room = require('./Room');
+var jsonmaker = require('./JSONMaker');
+
+var rooms = [];
 
 var socketHttp = http.createServer(function(request,response){
 	console.log((new Date()) + "Received request for" + request.url);
@@ -11,8 +14,9 @@ var socketHttp = http.createServer(function(request,response){
 });
 
 socketHttp.listen(3000,function(){
-	//var r = new Room();
-	//console.log(r.isRoomAvailable());
+	
+	//var test = [ {"response":{"ass":"zxc"}}];
+	//console.log(JSON.stringify(test));
    console.log("server listenting on port 3000");
 });
 
@@ -21,26 +25,44 @@ var wsServer = new socketServer({
 	autoAcceptConnections:false
 });
 
+function createRoom(){
+
+	var r = new Room();	
+	rooms.push(r);	
+	return r;
+}
+
+
+
 wsServer.on('request',function(request){
 	
-	console.log(request.remoteAddress);
+	//console.log(request.remoteAddress);
 	var connection = request.accept('echo-protocol',request.origin);
-	console.log('connection accepted');
+	//console.log('connection accepted');
+	
 	connection.on('message',function(message){
 		
 					
 	})
 
-	var testData = {
-		"response":{
-			"type":"greet",
-			"data":{
-				"round":"1",
-			}
-		}
 	
-	}
+	var added = false;		
+	var room = undefined;		
 
-	connection.sendUTF(JSON.stringify(testData));
+	rooms.forEach(function(item, index){
+		if(item.isRoomAvailable() && !added){
+			added = true;
+			room = item;	
+		}
+	})
+
+	// if added is false, all rooms are occupied. so create new room
+
+	if(!added){
+		room = createRoom();
+	}
+	
+	var response = JSONMaker.makeGreetJSON(room.getRoomDetails(),room.addPlayer());
+	connection.sendUTF(JSON.stringify(response));
 
 });

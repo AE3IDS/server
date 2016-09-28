@@ -7,7 +7,7 @@ function Room(){
 }
 
 Room.prototype.isRoomAvailable = function isRoomAvailable(){
-	return this._players.length == this._maxNumberOfPeople;
+	return this._players.length != this._maxNumberOfPeople;
 }
 
 Room.prototype.getRoomDetails = function getRoomDetails(){
@@ -25,8 +25,11 @@ Room.prototype.checkPlayerWithId = function checkPlayerWithId(userId){
 Room.prototype.addPlayer = function addPlayer(){
 	
 	var newUser = new User();
-	this._players.push(newUser);	
+	this._players.push(newUser);
 	
+	console.log("user id of user is");
+	console.log(newUser.getUserId());
+
 	return newUser.getUserId();
 }
 
