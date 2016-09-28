@@ -50,6 +50,7 @@ wsServer.on('request',function(request){
 	var room = undefined;		
 
 	rooms.forEach(function(item, index){
+		console.log(item.isRoomAvailable());
 		if(item.isRoomAvailable() && !added){
 			added = true;
 			room = item;	
@@ -62,7 +63,8 @@ wsServer.on('request',function(request){
 		room = createRoom();
 	}
 	
-	var response = JSONMaker.makeGreetJSON(room.getRoomDetails(),room.addPlayer());
+	console.log(rooms.length);
+	var response = jsonmaker.makeGreetJSON(room.getRoomDetails(),room.addPlayer());
 	connection.sendUTF(JSON.stringify(response));
 
 });

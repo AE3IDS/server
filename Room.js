@@ -11,7 +11,7 @@ Room.prototype.isRoomAvailable = function isRoomAvailable(){
 }
 
 Room.prototype.getRoomDetails = function getRoomDetails(){
-	return {"round":this_roundNum,"players":this._players.length}
+	return {"round":this._roundNum,"players":this._players.length}
 }
 
 Room.prototype.checkPlayerWithId = function checkPlayerWithId(userId){
