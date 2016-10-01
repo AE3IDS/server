@@ -4,6 +4,9 @@ var fs = require('fs');
 var socketServer = require('websocket').server;
 var Room = require('./Room');
 var jsonmaker = require('./JSONMaker');
+var Constant = require('./Constants');
+
+
 
 var rooms = [];
 
@@ -14,10 +17,7 @@ var socketHttp = http.createServer(function(request,response){
 });
 
 socketHttp.listen(3000,function(){
-	
-	//var test = [ {"response":{"ass":"zxc"}}];
-	//console.log(JSON.stringify(test));
-   console.log("server listenting on port 3000");
+	console.log("server listenting on port 3000");
 });
 
 var wsServer = new socketServer({
@@ -32,7 +32,7 @@ function createRoom(){
 	return r;
 }
 
-function greetMessage(){
+function greetMessage(connection){
 	var added = false;		
 	var room = undefined;		
 
@@ -55,8 +55,12 @@ function greetMessage(){
 	connection.sendUTF(JSON.stringify(response));
 }
 
-function roomlist(){
+function roomlist(connection){
 
+    var response = jsonmaker.makeRoomListJSON(rooms,ROOMLIST_CODE);
+    console.log(JSON.stringify(response));
+
+    //connection.sendUTF(JSON.stringify(response));
 
 }
 
@@ -79,13 +83,13 @@ wsServer.on('request',function(request){
 					// greet message				
 
 					case 101:
-						greetMessage();
+						greetMessage(connection);
 						break;
 					
 					// get roomlist message
 
 					case 104:
-						roomlist();
+						roomlist(connection);
 						break;
 				}
 
