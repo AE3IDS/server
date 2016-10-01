@@ -32,20 +32,7 @@ function createRoom(){
 	return r;
 }
 
-
-
-wsServer.on('request',function(request){
-	
-	//console.log(request.remoteAddress);
-	var connection = request.accept('echo-protocol',request.origin);
-	//console.log('connection accepted');
-	
-	connection.on('message',function(message){
-		
-					
-	})
-
-	
+function greetMessage(){
 	var added = false;		
 	var room = undefined;		
 
@@ -56,7 +43,7 @@ wsServer.on('request',function(request){
 			room = item;	
 		}
 	})
-
+	
 	// if added is false, all rooms are occupied. so create new room
 
 	if(!added){
@@ -66,5 +53,50 @@ wsServer.on('request',function(request){
 	console.log(rooms.length);
 	var response = jsonmaker.makeGreetJSON(room.getRoomDetails(),room.addPlayer());
 	connection.sendUTF(JSON.stringify(response));
+}
+
+function roomlist(){
+
+
+}
+
+wsServer.on('request',function(request){
+	
+	//console.log(request.remoteAddress);
+	var connection = request.accept('echo-protocol',request.origin);
+	//console.log('connection accepted');
+	
+	connection.on('message',function(message){
+		console.log(message.type);
+
+		if(message.type === 'utf8'){
+	
+			try{
+				var data = JSON.parse(message.utf8Data);
+	 
+				switch(data.request.code){
+					
+					// greet message				
+
+					case 101:
+						greetMessage();
+						break;
+					
+					// get roomlist message
+
+					case 104:
+						roomlist();
+						break;
+				}
+
+			}catch(SyntaxError e){
+				console.log("can't parse json");
+				process.exit(1);
+			}
+
+		}		
+	})
+
+	
 
 });
