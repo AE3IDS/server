@@ -1,6 +1,13 @@
+
+var Chance = require('chance');
 var User = require("./User");
 
-function Room(){
+
+function Room(seq){
+
+	var randomAlphabet = Chance.character({pool:'ABCDEFGHIJKLMNOPQRSTUVWYZ'});
+
+	this._roomId = randomAlphabet + seq.toString();
 	this._roundNum = 1;
 	this._maxNumberOfPeople = 4;
 	this._players = [];
@@ -11,7 +18,7 @@ Room.prototype.isRoomAvailable = function isRoomAvailable(){
 }
 
 Room.prototype.getRoomDetails = function getRoomDetails(){
-	return {"round":this._roundNum,"players":this._players.length}
+	return {"round":this._roundNum,"players":this._players.length, "roomId":this._roomId}
 }
 
 Room.prototype.checkPlayerWithId = function checkPlayerWithId(userId){
