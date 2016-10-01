@@ -89,7 +89,7 @@ wsServer.on('request',function(request){
 						break;
 				}
 
-			}catch(SyntaxError e){
+			}catch(e){
 				console.log("can't parse json");
 				process.exit(1);
 			}
