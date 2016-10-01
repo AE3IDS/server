@@ -1,5 +1,5 @@
 
-var Chance = require('chance');
+var Chance = require('chance').Chance();
 var User = require("./User");
 
 
