@@ -13,11 +13,9 @@ function createJson(code, data){
 }
 
 
-JSONMaker.makeGreetJSON = function(room,userID,code){
+JSONMaker.makeGreetJSON = function(room,code){
 
-    var details = room.getRoomDetails();
-    details["user"] = userID;
-            
+    var details = room.getRoomDetails();            
 	return createJson(code,details);
 }
 
@@ -30,5 +28,5 @@ JSONMaker.makeRoomListJSON = function(roomList,code){
     }) 
 
     return createJson(code,ar);
-}
+
 module.exports = JSONMaker
