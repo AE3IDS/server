@@ -5,40 +5,30 @@ var Room = require('./Room');
 
 
 function Game(){
-    
-    console.log("create");
+
     this._rooms = [];
 
 }
 
-function createRoom(){
+function getRoomWithId(id,rooms){
 
-	var r = new Room();	
-	this._rooms.push(r);	
-	return r;
+    var foundRoom = false;
+    var room = undefined;
+
+    rooms.forEach(function(item,index){
+        if(!item.checkPlayerWithId(id) && !foundRoom){
+            foundRoom = true;
+            room = item;
+        }
+    });
+
+    return room;
 }
 
-function getRoom(rooms){
-
-	var added = false;		
-	var room = undefined;		
-
-	rooms.forEach(function(item, index){
-		console.log(item.isRoomAvailable());
-		if(item.isRoomAvailable() && !added){
-			added = true;
-			room = item;	
-		}
-	})
+function createRoom(rooms, rules){
  
-    // if added is false, all rooms are occupied. so create new room
-
-    if(!added){
-        room = new Room(rooms.length+1);
-        rooms.push(room);
-    }
-
-    //console.log(room);
+    var room = new Room(rooms.length+1);
+    rooms.push(room);
         
     return  room;
 	
@@ -64,11 +54,8 @@ Game.prototype.handleMessage = function(connection,dt){
 		    // greet message
 
             case Constant.GREET_CODE:
-                
-                var room = getRoom(this._rooms);
-                console.log(this._rooms.length);
-                output = jsonmaker.makeGreetJSON(room,room.addPlayer(),Constant.GREET_CODE);
-
+                var room = getRoomWithId(data.request.data.userId, this._rooms);
+                output = jsonmaker.makeGreetJSON(room,Constant.GREET_CODE);
 			    break;
 					
 		    // get roomlist message
@@ -76,7 +63,21 @@ Game.prototype.handleMessage = function(connection,dt){
             case Constant.ROOMLIST_CODE:
 	            output  = jsonmaker.makeRoomListJSON(this._rooms,Constant.ROOMLIST_CODE);
 			    break;
-		
+
+
+            // when host send selected rules
+
+            case Constant.SELECTEDRULE_CODE:
+                var room = createRoom(this._rooms,data.request.data.rules);
+                console.log(this._rooms.length);
+                break;
+
+            
+            // when host request all the ruels
+
+		    case Constant.FETCHRULE_CODE:
+                output = jsonmaker.makeRulesJSON(Constant.FETCHRULE_CODE,{rules:[]});
+                break;
         }
         
         connection.sendUTF(JSON.stringify(output));
