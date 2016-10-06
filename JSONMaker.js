@@ -28,5 +28,12 @@ JSONMaker.makeRoomListJSON = function(roomList,code){
     }) 
 
     return createJson(code,ar);
+}
+
+JSONMaker.makeRulesJSON = function(code,rules){
+
+    return createJson(code,rules);
+
+}
 
 module.exports = JSONMaker
