@@ -13,21 +13,15 @@ Player.prototype.getUserId = function getUserId(){
 	return this._userId;
 }
 
-Player.prototype.setPhotoId = function setPhotoId(id, /* optional */ selectedPhotoIds){
+function getRandomPhotoId( selectedPhotoIds){
 
-    if(id == undefined){
-    
-        while(true){
+    while(true){
 
-            id = Chance.natural({min:0,max:5});
-            if(!selectedPhotoIds.includes(id)){
-                break;
-            }           
-        }     
-    }
-
-    this._photoId = id;
-
+        var id = Chance.natural({min:0,max:5});
+        if(!selectedPhotoIds.includes(id)){
+            return id;
+        }           
+    }     
 }
 
 
