@@ -9,6 +9,10 @@ function Player(avatarId, /*optional */ selectedPhotoIds){
 
 }
 
+Player.prototype.getPhotoId = function getPhotoId(){
+    return this._photoId;
+}
+
 Player.prototype.getUserId = function getUserId(){
 	return this._userId;
 }
