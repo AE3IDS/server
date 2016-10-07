@@ -10,7 +10,7 @@ function Game(){
 
 }
 
-function getRoomWithId(id,rooms){
+function getRoomWithUserId(id,rooms){
 
     var foundRoom = false;
     var room = undefined;
@@ -54,7 +54,7 @@ Game.prototype.handleMessage = function(connection,dt){
 		    // greet message
 
             case Constant.GREET_CODE:
-                var room = getRoomWithId(data.request.data.userId, this._rooms);
+                var room = getRoomWithUserId(data.request.data.userId, this._rooms);
                 output = jsonmaker.makeGreetJSON(room,Constant.GREET_CODE);
 			    break;
 					
@@ -72,7 +72,6 @@ Game.prototype.handleMessage = function(connection,dt){
                 console.log(this._rooms.length);
                 break;
 
-            
             // when host request all the ruels
 
 		    case Constant.FETCHRULE_CODE:
