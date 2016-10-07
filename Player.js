@@ -1,9 +1,9 @@
 
 var Chance = require('chance').Chance();
 
-function Player(){
+function Player(avatarId, /*optional */ selectedPhotoIds){
     
-    this._photoId = -1;
+    this._photoId = avatarId == undefined?getRandomPhotoId(selectedPhotoIds):avatarId;
     this._cards = [];
 	this._userId = Chance.string({length:5});
 
