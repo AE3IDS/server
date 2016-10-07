@@ -3,10 +3,11 @@ var Chance = require('chance').Chance();
 var User = require("./User");
 
 
-function Room(seq){
+function Room(seq, mode){
 
 	var randomAlphabet = Chance.character({pool:'ABCDEFGHIJKLMNOPQRSTUVWYZ'});
-
+    
+    this._mode = mode;
 	this._roomId = randomAlphabet + seq.toString();
 	this._roundNum = 1;
 	this._maxNumberOfPeople = 4;
