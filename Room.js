@@ -2,7 +2,7 @@
 var Chance = require('chance').Chance();
 var Player = require("./Player");
 var colors = require('colors');
-var Bot = require('../Bot/Bot');
+var Bot = require('../bot/Bot');
 
 
 function Room(seq, mode){
@@ -45,13 +45,14 @@ Room.prototype.addBot = function addBot(){
             return item.getPhotoId();
     })
 
-    var botPhotoIds = this._bot.map(function(item){
+    var botPhotoIds = this._bots.map(function(item){
             return item.getPhotoId();
-    }
+    })
 
     
     var bt = new Bot(selectedPhotoIds.concat(botPhotoIds));
-    return bt.getDetails();
+    this._bots.push(bt);
+    return {"photoId":bt.getPhotoId};
 
 }
 
