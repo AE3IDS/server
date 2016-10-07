@@ -1,6 +1,8 @@
 
 var Chance = require('chance').Chance();
-var User = require("./User");
+var Player = require("./Player");
+var colors = require('colors');
+var Bot = require('../Bot/Bot');
 
 
 function Room(seq, mode){
@@ -36,15 +38,21 @@ Room.prototype.getRoomId = function getRoomId(){
 
 }
 
-Room.prototype.addPlayer = function addPlayer(){
+Room.prototype.addPlayer = function addPlayer(avatarId){
 	
-	var newUser = new User();
-	this._players.push(newUser);
+       
+	var newPlayer = new Player(avatarId);
+	this._players.push(newPlayer);
 	
-	console.log("user id of user is");
-	console.log(newUser.getUserId());
+       
+    console.log("-------------- add new user --------------".rainbow);
 
-	return newUser.getUserId();
+    /*console.log("photo id of player is " + newPlayer.getPhotoId());
+	console.log("user id of player is " + newPlayer.getUserId());
+
+    console.log("------------------------------------------".rainbow);*/
+
+	return newPlayer.getUserId();
 }
 
 module.exports = Room;
