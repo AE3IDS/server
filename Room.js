@@ -30,6 +30,12 @@ Room.prototype.checkPlayerWithId = function checkPlayerWithId(userId){
 	return filtered.length == 0;
 }
 
+Room.prototype.getRoomId = function getRoomId(){
+    
+    return this._roomId;
+
+}
+
 Room.prototype.addPlayer = function addPlayer(){
 	
 	var newUser = new User();
