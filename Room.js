@@ -14,6 +14,7 @@ function Room(seq, mode){
 	this._roundNum = 1;
 	this._maxNumberOfPeople = 4;
 	this._players = [];
+    this._bots = [];
 }
 
 Room.prototype.isRoomAvailable = function isRoomAvailable(){
@@ -35,6 +36,22 @@ Room.prototype.checkPlayerWithId = function checkPlayerWithId(userId){
 Room.prototype.getRoomId = function getRoomId(){
     
     return this._roomId;
+
+}
+
+Room.prototype.addBot = function addBot(){
+
+    var selectedPhotoIds  = this._players.map(function(item){
+            return item.getPhotoId();
+    })
+
+    var botPhotoIds = this._bot.map(function(item){
+            return item.getPhotoId();
+    }
+
+    
+    var bt = new Bot(selectedPhotoIds.concat(botPhotoIds));
+    return bt.getDetails();
 
 }
 
