@@ -25,9 +25,19 @@ function getRoomWithUserId(id,rooms){
     return room;
 }
 
-function createRoom(rooms, rules){
+function joinRoom(roomId, rooms,avatarId){
+    
+    var r = rooms.filter(function(val){
+            return val.getRoomId() == roomId;
+        })
+
+    //r[0].addPlayer(
+
+}
+
+function createRoom(rooms, rules, mode){
  
-    var room = new Room(rooms.length+1);
+    var room = new Room(rooms.length+1, mode);
     rooms.push(room);
         
     return  room;
@@ -42,45 +52,53 @@ Game.prototype.handleMessage = function(connection,dt){
 
     //console.log("asdfs");
 
-
      //try{
         
         var data = JSON.parse(dt);
 	    var output = undefined;
 
 
-		switch(data.request.code){
-					
-		    // greet message
+        if(data.code == Constant.GREET_CODE){
 
-            case Constant.GREET_CODE:
-                var room = getRoomWithUserId(data.request.data.userId, this._rooms);
-                output = jsonmaker.makeGreetJSON(room,Constant.GREET_CODE);
-			    break;
-					
-		    // get roomlist message
+            var room = getRoomWithUserId(data.data.userId,this._rooms);
 
-            case Constant.ROOMLIST_CODE:
-	            output  = jsonmaker.makeRoomListJSON(this._rooms,Constant.ROOMLIST_CODE);
-			    break;
+            // Send room details to user
+
+            room.sendRoomDetails(connection,Constant.GREET_CODE);
+
+            // Send details of each of the player
+            // in the room
+            
+            room.sendPlayers(connection,Constant.NEWPLAYER_CODE);
 
 
-            // when host send selected rules
+        }else if(data.code == Constant.ROOMLIST_CODE){
 
-            case Constant.SELECTEDRULE_CODE:
-                var room = createRoom(this._rooms,data.request.data.rules);
-                console.log(this._rooms.length);
-                break;
+            output  = jsonmaker.makeResponseJSON({"rooms":this._rooms},Constant.ROOMLIST_CODE);
 
-            // when host request all the ruels
+        }else if(data.code == Constant.LOBBYDETAILS_CODE){
 
-		    case Constant.FETCHRULE_CODE:
-                output = jsonmaker.makeRulesJSON(Constant.FETCHRULE_CODE,{rules:[]});
-                break;
+            // create new game room
+
+            var room = createRoom(this._rooms,data.data.rules,data.data.mode);
+
+            // add the host
+
+            room.addPlayer(connection, Constant.LOBBYDETAILS_CODE, data.data.avatar);
+            
+            console.log("Total amount of Rooms is: " + this._rooms.length);
+
+        }else if(data.code == Constant.FETCHRULE_CODE){
+            
+            output = jsonmaker.makeResponseJSON({rules:[]}, Constant.FETCHRULE_CODE);
+
         }
         
-        connection.sendUTF(JSON.stringify(output));
 
+        if(output != undefined){
+             connection.sendUTF(JSON.stringify(output));
+        }
+        
     //}catch(e){
       //  console.log("error occured " + e.message);
         //process.exit(1);
