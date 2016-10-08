@@ -3,6 +3,7 @@ var Chance = require('chance').Chance();
 var Player = require("./Player");
 var colors = require('colors');
 var Bot = require('../bot/Bot');
+var jsonmaker = require('./JSONMaker');
 
 
 function Room(seq, mode){
@@ -21,9 +22,14 @@ Room.prototype.isRoomAvailable = function isRoomAvailable(){
 	return this._players.length != this._maxNumberOfPeople;
 }
 
-Room.prototype.getRoomDetails = function getRoomDetails(){
-	return {"round":this._roundNum,"players":this._players.length, "roomId":this._roomId}
+Room.prototype.sendRoomDetails = function sendRoomDetails(connection,code){
+
+    var details = {"round":this._roundNum, "roomId":this._roomId};
+    var output = jsonmaker.makeGreetJSON(details,code);
+    connection.sendUTF(JSON.stringify(output));
+
 }
+
 
 Room.prototype.checkPlayerWithId = function checkPlayerWithId(userId){
 
