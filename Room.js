@@ -18,6 +18,8 @@ function Room(seq, mode){
     this._bots = [];
 }
 
+//  Public methods  //
+
 Room.prototype.isRoomAvailable = function isRoomAvailable(){
 	return this._players.length != this._maxNumberOfPeople;
 }
@@ -27,6 +29,30 @@ Room.prototype.sendRoomDetails = function sendRoomDetails(connection,code){
     var details = {"round":this._roundNum, "roomId":this._roomId};
     var output = jsonmaker.makeGreetJSON(details,code);
     connection.sendUTF(JSON.stringify(output));
+
+}
+
+Room.prototype.sendPlayers = function sendPlayers(connection,code){
+
+        
+    if(this._mode == 1){
+
+        // When singleplayer mode
+
+        this.addBot(3);
+        this._bots.forEach(function(item){
+            var botDetail = {"userId":item.getUserId(),"photoId":item.getPhotoId()};
+            var output = jsonmaker.makeNewPlayerJSON(botDetail,code);
+            connection.sendUTF(JSON.stringify(output));
+        }
+
+
+    }else if(this._mode == 2){
+    
+        // When multiplayer mode
+        
+
+    }
 
 }
 
@@ -43,6 +69,29 @@ Room.prototype.getRoomId = function getRoomId(){
     return this._roomId;
 
 }
+
+
+Room.prototype.addPlayer = function addPlayer(avatarId){
+	
+       
+	var newPlayer = new Player(avatarId);
+	this._players.push(newPlayer);
+	
+       
+    console.log("-------------- add new user --------------".rainbow);
+
+    /*console.log("photo id of player is " + newPlayer.getPhotoId());
+	console.log("user id of player is " + newPlayer.getUserId());
+
+    console.log("------------------------------------------".rainbow);*/
+
+	return newPlayer.getUserId();
+}
+
+// end public methods
+
+
+//  Private methods  //
 
 Room.prototype.addBot = function addBot(numOfBots){
 
@@ -62,21 +111,6 @@ Room.prototype.addBot = function addBot(numOfBots){
     }
 }
 
-Room.prototype.addPlayer = function addPlayer(avatarId){
-	
-       
-	var newPlayer = new Player(avatarId);
-	this._players.push(newPlayer);
-	
-       
-    console.log("-------------- add new user --------------".rainbow);
-
-    /*console.log("photo id of player is " + newPlayer.getPhotoId());
-	console.log("user id of player is " + newPlayer.getUserId());
-
-    console.log("------------------------------------------".rainbow);*/
-
-	return newPlayer.getUserId();
-}
+// end private methods // 
 
 module.exports = Room;
