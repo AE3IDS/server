@@ -30,7 +30,6 @@ Room.prototype.sendRoomDetails = function sendRoomDetails(connection,code){
 
 }
 
-
 Room.prototype.checkPlayerWithId = function checkPlayerWithId(userId){
 
 	var filtered = this._players.filter(function(val){
@@ -45,21 +44,22 @@ Room.prototype.getRoomId = function getRoomId(){
 
 }
 
-Room.prototype.addBot = function addBot(){
+Room.prototype.addBot = function addBot(numOfBots){
 
-    var selectedPhotoIds  = this._players.map(function(item){
+    for(var i = 0; i < numOfBots;i++){
+        
+        var selectedPhotoIds  = this._players.map(function(item){
             return item.getPhotoId();
-    })
+        })
 
-    var botPhotoIds = this._bots.map(function(item){
+        var botPhotoIds = this._bots.map(function(item){
             return item.getPhotoId();
-    })
+        })
 
     
-    var bt = new Bot(selectedPhotoIds.concat(botPhotoIds));
-    this._bots.push(bt);
-    return {"photoId":bt.getPhotoId};
-
+        var bt = new Bot(selectedPhotoIds.concat(botPhotoIds));
+        this._bots.push(bt);
+    }
 }
 
 Room.prototype.addPlayer = function addPlayer(avatarId){
