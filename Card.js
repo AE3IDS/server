@@ -27,3 +27,5 @@ Card.prototype.isCardEqual = function isCardEqual(card){
 Card.prototype.isCardStronger = function isCardStronger(card){
     return this._kind > card.getKind();
 }
+
+module.exports = Card;
