@@ -5,6 +5,7 @@ var colors = require('colors');
 var Bot = require('../bot/Bot');
 var jsonmaker = require('./JSONMaker');
 var Constants = require('./Constants');
+var Deck = require('./Deck');
 
 function Room(seq, mode){
 
@@ -16,6 +17,7 @@ function Room(seq, mode){
 	this._maxNumberOfPeople = 4;
 	this._players = [];
     this._bots = [];
+    this._deck = new Deck();
 }
 
 //  Public methods  //
@@ -56,10 +58,7 @@ Room.prototype.sendPlayers = function sendPlayers(connection,code){
 
         },1000);
 
-        var g = setTimeout(function(){
-              var occupiedOutput = jsonmaker.makeResponseJSON({},Constants.GAMEROOM_OCCUPIED);
-              connection.sendUTF(JSON.stringify(occupiedOutput));
-        },4000);
+        sendRoomOccupiedMessage(connection,4000);        
 
         
     }else if(this._mode == 2){
@@ -68,6 +67,8 @@ Room.prototype.sendPlayers = function sendPlayers(connection,code){
         
 
     }
+
+
 
 }
 
@@ -119,6 +120,15 @@ Room.prototype.addBot = function addBot(numOfBots){
         var bt = new Bot(selectedPhotoIds.concat(botPhotoIds));
         this._bots.push(bt);
     }
+}
+
+function sendRoomOccupiedMessage(connection, time){
+
+    var g = setTimeout(function(){
+         var occupiedOutput = jsonmaker.makeResponseJSON({},Constants.GAMEROOM_OCCUPIED);
+         connection.sendUTF(JSON.stringify(occupiedOutput));
+    },time);
+
 }
 
 // end private methods // 
