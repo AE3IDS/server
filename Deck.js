@@ -19,3 +19,5 @@ function Deck(){
 Deck.prototype.shuffle = function shuffle(){
 
 }
+
+module.exports = Deck;
