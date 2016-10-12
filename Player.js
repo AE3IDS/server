@@ -13,6 +13,14 @@ Player.prototype.addCard = function addCard(card){
     this._cards.push(card);
 }
 
+Player.prototype.hasCard = function hasCard(card){
+    var r = this._cards.filter(function(val){
+        return val.isCardEqual(card);
+    });
+
+    return r.length != 0;
+}
+
 Player.prototype.getPhotoId = function getPhotoId(){
     return this._photoId
 }
