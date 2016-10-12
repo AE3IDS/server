@@ -16,7 +16,7 @@ function getRoomWithUserId(id,rooms){
     var room = undefined;
 
     rooms.forEach(function(item,index){
-        if(!item.checkPlayerWithId(id) && !foundRoom){
+        if(item.checkPlayerWithId(id) && !foundRoom){
             foundRoom = true;
             room = item;
         }
@@ -96,7 +96,7 @@ Game.prototype.handleMessage = function(connection,dt){
         
 
         if(output != undefined){
-             connection.sendUTF(JSON.stringify(output));
+             connection.send(JSON.stringify(output));
         }
         
     //}catch(e){
