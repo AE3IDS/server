@@ -9,6 +9,10 @@ function Player(avatarId){
 
 }
 
+Player.prototype.addCard = function addCard(card){
+    this._cards.push(card);
+}
+
 Player.prototype.getPhotoId = function getPhotoId(){
     return this._photoId
 }
