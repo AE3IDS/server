@@ -3,39 +3,22 @@ var http = require('http');
 var Game = require('./Game').Game();
 var colors = require('colors');
 
-var socketServer = require('websocket').server;
+var WebsocketServer = require('ws').Server;
+var ws = new WebsocketServer({host:"127.0.0.1",port:3000});
 
-var socketHttp = http.createServer(function(request,response){
-	console.log((new Date()) + "Received request for" + request.url);
-	response.writeHead(404);
-	response.end();
-});
+ws.on('connection',function(sock){
 
-socketHttp.listen(3000,function(){
+    console.log("connection");
 
-	console.log("server listenting on port 3000");
-});
+    sock.on('message',function(msg){
+           
+        console.log("receive data".yellow);
+        console.log(msg);
+        console.log("\n");
 
-var wsServer = new socketServer({
-	httpServer:socketHttp,
-	autoAcceptConnections:false
-});
+        Game.handleMessage(sock,msg);     
 
 
+    });
 
-wsServer.on('request',function(request){
-	
-	var connection = request.accept('echo-protocol',request.origin);
-	
-    console.log("connection accepted with IP ".green + request.remoteAddress.green );
-	
-	connection.on('message',function(message){
-
-		if(message.type === 'utf8'){
-            console.log(message.utf8Data);
-            
-            Game.handleMessage(connection,message.utf8Data);
-		}
-
-	})
 });
