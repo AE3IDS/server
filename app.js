@@ -4,7 +4,7 @@ var Game = require('./Game').Game();
 var colors = require('colors');
 
 var WebsocketServer = require('ws').Server;
-var ws = new WebsocketServer({host:"127.0.0.1",port:3000});
+var ws = new WebsocketServer({host:"192.168.2.1",port:3000});
 
 ws.on('connection',function(sock){
 
@@ -13,12 +13,11 @@ ws.on('connection',function(sock){
     sock.on('message',function(msg){
            
         console.log("receive data".yellow);
-        console.log(msg);
+        //console.log(msg);
         console.log("\n");
-
+        
         Game.handleMessage(sock,msg);     
 
 
     });
-
 });
