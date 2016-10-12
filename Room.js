@@ -15,7 +15,7 @@ function Room(seq, mode){
 	this._roomId = randomAlphabet + seq.toString();
 	this._roundNum = 1;
 	this._maxNumberOfPeople = 4;
-	this._players = [];
+	this._players = {};
     this._bots = [];
     this._deck = new Deck();
 }
@@ -90,11 +90,13 @@ Room.prototype.getRoomId = function getRoomId(){
 Room.prototype.addPlayer = function addPlayer(connection, code, avatarId){
 	
 	var newPlayer = new Player(avatarId);
-	this._players.push(newPlayer);
 	       
     console.log("-------------- add new user --------------".rainbow);
 
-    var output = jsonmaker.makeResponseJSON({"userId":newPlayer.getUserId()},code);
+    var id = newPlayer.getUserId();
+    this._players[id] = connection;
+
+    var output = jsonmaker.makeResponseJSON({"userId":id},code);
     connection.sendUTF(JSON.stringify(output));
 
 }
