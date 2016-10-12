@@ -15,7 +15,7 @@ function Room(seq, mode){
 	this._roomId = randomAlphabet + seq.toString();
 	this._roundNum = 1;
 	this._maxNumberOfPeople = 4;
-	this._players = {};
+	this._players = [];
     this._bots = [];
     this._deck = new Deck();
 }
@@ -30,7 +30,7 @@ Room.prototype.sendRoomDetails = function sendRoomDetails(connection,code){
 
     var details = {"round":this._roundNum, "roomId":this._roomId};
     var output = jsonmaker.makeResponseJSON(details,code);
-    connection.sendUTF(JSON.stringify(output));
+    connection.send(JSON.stringify(output));
 
 }
 
@@ -40,17 +40,17 @@ Room.prototype.sendPlayers = function sendPlayers(connection,code){
     if(this._mode == 1){
 
         // When singleplayer mode
-
         this.addBot(3);
         var bots = this._bots;
+        
 
         var t = setInterval(function(){
             
             var item = bots.shift();
-
             var botDetail = {"userId":item.getUserId(),"photoId":item.getPhotoId()};
+
             var output = jsonmaker.makeResponseJSON(botDetail,code);
-            connection.sendUTF(JSON.stringify(output));
+            connection.send(JSON.stringify(output));
             
             if(bots.length == 0){
                 clearInterval(t);
@@ -74,10 +74,13 @@ Room.prototype.sendPlayers = function sendPlayers(connection,code){
 
 Room.prototype.checkPlayerWithId = function checkPlayerWithId(userId){
 
-	var filtered = this._players.filter(function(val){
-				return val.getUserId() == userId
-				});
-	return filtered.length == 0;
+	var found = false;
+
+    for(var i = 0;i<this._players.length;i++){
+        found =this._players[i].getUserId() == userId;
+    }
+
+	return found;
 }
 
 Room.prototype.getRoomId = function getRoomId(){
@@ -89,15 +92,15 @@ Room.prototype.getRoomId = function getRoomId(){
 
 Room.prototype.addPlayer = function addPlayer(connection, code, avatarId){
 	
-	var newPlayer = new Player(avatarId);
+	var newPlayer = new Player(avatarId,connection);
 	       
     console.log("-------------- add new user --------------".rainbow);
 
     var id = newPlayer.getUserId();
-    this._players[id] = connection;
+    this._players.push(newPlayer);
 
     var output = jsonmaker.makeResponseJSON({"userId":id},code);
-    connection.sendUTF(JSON.stringify(output));
+    connection.send(JSON.stringify(output));
 
 }
 
@@ -118,7 +121,7 @@ Room.prototype.addBot = function addBot(numOfBots){
             return item.getPhotoId();
         })
 
-    
+
         var bt = new Bot(selectedPhotoIds.concat(botPhotoIds));
         this._bots.push(bt);
     }
@@ -128,7 +131,7 @@ function sendRoomOccupiedMessage(connection, time){
 
     var g = setTimeout(function(){
          var occupiedOutput = jsonmaker.makeResponseJSON({},Constants.GAMEROOM_OCCUPIED);
-         connection.sendUTF(JSON.stringify(occupiedOutput));
+         connection.send(JSON.stringify(occupiedOutput));
     },time);
 
 }
