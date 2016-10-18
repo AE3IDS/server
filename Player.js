@@ -1,12 +1,16 @@
 
 var Chance = require('chance').Chance();
 
-function Player(avatarId){
+function Player(avatarId, conn){
     
     this._photoId = avatarId;
     this._cards = [];
 	this._userId = Chance.string({length:5});
+    this._connection = conn;
+}
 
+Player.prototype.getConn = function getConn(){
+    return this._connection;
 }
 
 Player.prototype.addCard = function addCard(card){
