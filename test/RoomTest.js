@@ -2,7 +2,7 @@ var chai = require('chai');
 var expect = chai.expect;
 var Room = require('../Room');
 var chance = require('chance').Chance();
-var Player == require('../Player');
+var Player = require('../Player');
 
 describe('RoomTest',function(){
     
