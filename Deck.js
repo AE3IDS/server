@@ -63,10 +63,14 @@ Deck.prototype.shuffle = function shuffle(){
         
     }
 
-    //shuffled.forEach(function(item){ console.log(item.length) });
-
-    return shuffled;
-
+    this._cards = shuffled;
+    //shuffled.forEach(function(item){ console.log(item.length) })
 }
+
+Deck.prototype.getCards = function getCards(){
+    return this._cards;
+}
+
+
 
 module.exports = Deck;
