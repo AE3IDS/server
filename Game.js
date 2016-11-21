@@ -61,16 +61,8 @@ Game.prototype.handleMessage = function(connection,dt){
         if(data.code == Constant.GREET_CODE){
 
             var room = getRoomWithUserId(data.data.userId,this._rooms);
-
-            // Send room details to user
-
             room.sendRoomDetails(connection,Constant.GREET_CODE);
-
-            // Send details of each of the player
-            // in the room
-            
             room.sendPlayers(connection,Constant.NEWPLAYER_CODE);
-
 
         }else if(data.code == Constant.ROOMLIST_CODE){
 
@@ -78,12 +70,7 @@ Game.prototype.handleMessage = function(connection,dt){
 
         }else if(data.code == Constant.LOBBYDETAILS_CODE){
 
-            // create new game room
-
             var room = createRoom(this._rooms,data.data.rules,data.data.mode);
-
-            // add the host
-
             room.addPlayer(connection, Constant.LOBBYDETAILS_CODE, data.data.avatar);
             
             console.log("Total amount of Rooms is: " + this._rooms.length);
@@ -91,6 +78,16 @@ Game.prototype.handleMessage = function(connection,dt){
         }else if(data.code == Constant.FETCHRULE_CODE){
             
             output = jsonmaker.makeResponseJSON({rules:[]}, Constant.FETCHRULE_CODE);
+
+        }else if(data.code == Constant.CARD_CODE){
+
+             var room = getRoomWithUserId(data.data.userId,this._rooms);
+             room.getCards(data.data.userId);
+
+        }else if(data.code == Constant.READY_CODE){
+            console.log("ready");
+            var room = getRoomWithUserId(data.data.userId,this._rooms);
+            room.addReady();
 
         }
         

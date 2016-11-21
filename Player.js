@@ -13,6 +13,10 @@ Player.prototype.getConn = function getConn(){
     return this._connection;
 }
 
+Player.prototype.getCard = function getCard(){
+    return this._cards;
+}
+
 Player.prototype.addCard = function addCard(card){
     this._cards.push(card);
 }

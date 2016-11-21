@@ -71,6 +71,16 @@ Deck.prototype.getCards = function getCards(){
     return this._cards;
 }
 
+Deck.prototype.getIndexStartCard = function getIndexStartCard(){
 
+    for(var i = 0; i < this._cards.length;i++){
+        for(var j = 0; j < this._cards[i].length;j++){
+            if(this._cards[i][j].isCardEqual(new Card(3,3))){
+                return i;
+            } 
+        }
+    }
+
+}
 
 module.exports = Deck;

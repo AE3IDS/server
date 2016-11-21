@@ -4,6 +4,8 @@
 	"main":"app.js",
 	"dependencies":{
 		"websocket":"^1.0.0",
+        "ip":"^1.0.0",
+        "ws":"1.1.1",
 		"base-64":"0.1.0",
 		"colors":"1.0.0",
 		"chance":"^1.0.4",
