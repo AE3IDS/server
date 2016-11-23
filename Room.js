@@ -90,7 +90,7 @@ Room.prototype.getCards = function getCards(userId){
     
         if(item.getUserId() == userId){
             var card = item.getCard();
-            var msg = new Message(Constants.CARD_CODE, {"cards":card});
+            var msg = new Message(Constants.CARD_CODE, {"cards":card[0]});
             MessageQueue.send(item.getConn(),[msg]);       
         }
 
