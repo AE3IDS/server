@@ -68,10 +68,11 @@ Room.prototype.addReady = function addReady(){
         var turnPlayerId = undefined;
         var index =  this._deck.getIndexStartCard();
         
+        console.log("user with diamond 3, " + index.toString());
+
         if(index <= (this._players.length -1)){
             turnPlayerId = this._players[index].getUserId();
         }else{
-            console.log(index);
             var bot =  this._bots[index-this._players.length];
             turnPlayerId = bot.getUserId();
         }
@@ -141,9 +142,12 @@ Room.prototype.manageCards = function manageCards(){
     var cards = this._deck.getCards();
     var counter = 0;
 
-    this._players.forEach(function(item){
-        item.addCard(cards[counter]);
+    this._players.forEach(function(item,index){
+        item.addCard(cards[index]);
+        counter = index;
     });
+
+    counter++;
 
     this._bots.forEach(function(item){
         item.addCard(cards[counter++]);
