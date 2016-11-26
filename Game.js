@@ -48,58 +48,62 @@ exports.Game = function(){
     return new Game();
 }
 
+function greetCodeHandler(data, rooms,connection){
+
+    var room = getRoomWithUserId(data.data.userId,rooms);
+    room.sendRoomDetails(connection,Constant.GREET_CODE);
+    room.sendPlayers(connection,Constant.NEWPLAYER_CODE);
+}
+
+function cardCodeHandler(data,rooms){
+
+    var room = getRoomWithUserId(data.data.userId,rooms);
+    room.getCards(data.data.userId);
+
+}
+
+function readyCodeHandler(data,rooms){
+ 
+    var room = getRoomWithUserId(data.data.userId,rooms);
+    room.addReady();
+
+}
+
+function lobbyDetailsCodeHandler(data,rooms,connection){
+    
+    var room = createRoom(rooms,data.data.rules,data.data.mode);
+    room.addPlayer(connection, Constant.LOBBYDETAILS_CODE, data.data.avatar);
+
+}
+
 Game.prototype.handleMessage = function(connection,dt){
 
-    //console.log("asdfs");
+    var data = JSON.parse(dt);
+	var output = undefined;
 
-     //try{
-        
-        var data = JSON.parse(dt);
-	    var output = undefined;
+    switch(data.code){
+
+        case Constant.GREET_CODE:
+            greetCodeHandler(data,this._rooms,connection);
+            break;
+
+        case Constant.CARD_CODE:
+            cardCodeHandler(data,this._rooms);
+            break;
+
+        case Constant.READY_CODE:
+            readyCodeHandler(data,this._rooms);
+            break;
+
+        case Constant.LOBBYDETAILS_CODE:
+            lobbyDetailsCodeHandler(data,this._rooms,connection);
+            break;
+    }
 
 
-        if(data.code == Constant.GREET_CODE){
-
-            var room = getRoomWithUserId(data.data.userId,this._rooms);
-            room.sendRoomDetails(connection,Constant.GREET_CODE);
-            room.sendPlayers(connection,Constant.NEWPLAYER_CODE);
-
-        }else if(data.code == Constant.ROOMLIST_CODE){
-
-            output  = jsonmaker.makeResponseJSON({"rooms":this._rooms},Constant.ROOMLIST_CODE);
-
-        }else if(data.code == Constant.LOBBYDETAILS_CODE){
-
-            var room = createRoom(this._rooms,data.data.rules,data.data.mode);
-            room.addPlayer(connection, Constant.LOBBYDETAILS_CODE, data.data.avatar);
-            
-            console.log("Total amount of Rooms is: " + this._rooms.length);
-
-        }else if(data.code == Constant.FETCHRULE_CODE){
-            
-            output = jsonmaker.makeResponseJSON({rules:[]}, Constant.FETCHRULE_CODE);
-
-        }else if(data.code == Constant.CARD_CODE){
-
-             var room = getRoomWithUserId(data.data.userId,this._rooms);
-             room.getCards(data.data.userId);
-
-        }else if(data.code == Constant.READY_CODE){
-            console.log("ready");
-            var room = getRoomWithUserId(data.data.userId,this._rooms);
-            room.addReady();
-
-        }
-        
-
-        if(output != undefined){
-             connection.send(JSON.stringify(output));
-        }
-        
-    //}catch(e){
-      //  console.log("error occured " + e.message);
-        //process.exit(1);
-    //} 
+    if(output != undefined){
+        connection.send(JSON.stringify(output));
+    }
 
 }
 //module.exports = Game;
