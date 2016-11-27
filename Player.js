@@ -1,8 +1,10 @@
 
 var Chance = require('chance').Chance();
+var Card = require('./Card');
 
 function Player(avatarId, conn){
-    
+ 
+    this._dealtCards = [];   
     this._photoId = avatarId;
     this._cards = [];
 	this._userId = Chance.string({length:5});
@@ -15,6 +17,22 @@ Player.prototype.getConn = function getConn(){
 
 Player.prototype.getCard = function getCard(){
     return this._cards;
+}
+
+Player.prototype.addDealtCards = function addDealtCards(data){
+
+    var dealtCards = this._dealtCards;
+
+    data.forEach(function(item){
+        var n = new Card(item["suit"],item["kind"]);
+        dealtCards.push(n);       
+    })
+
+}
+
+Player.prototype.getDealtCards = function getDealtCards(){
+
+    return this._dealtCards;
 }
 
 Player.prototype.addCard = function addCard(card){
