@@ -90,4 +90,65 @@ describe('DeckTest',function(){
         expect(duplicate).to.equal(false);
     })
 
+    it("shuffle should return array with all the cards present",function(){
+        
+        var deck = new Deck();
+        deck.shuffle();
+        var shuffledCards = deck.getCards();
+
+        var HeartSuit = [];
+        var ClubSuit = [];
+        var DiamonSuit = [];
+        var SpadesSuit = [];
+
+        shuffledCards.forEach(function(item){
+            item.forEach(function(i){
+                if(i.getSuit() == 1){
+                    HeartSuit.push(i);
+                }else if(i.getSuit() == 2){
+                    ClubSuit.push(i);
+                }else if(i.getSuit() == 3){
+                    DiamonSuit.push(i);
+                }else if(i.getSuit() == 4){
+                    SpadesSuit.push(i);
+                }
+            });        
+           
+        });
+
+        var Hearthas13 = HeartSuit.length == 13;
+        var Clubhas13 = ClubSuit.length == 13;
+        var Diamonhas13 = DiamonSuit.length == 13;
+        var Spadeshas13 = SpadesSuit.length == 13;
+        
+        var output = Hearthas13 && Clubhas13 && Diamonhas13 && Spadeshas13;
+
+        expect(output).to.equal(true); 
+    })
+    it("getIndexStartCard shall return the index of the array with Diamond 3 card",function(){
+        
+        var deck = new Deck();
+        deck.shuffle();
+        var shuffledCards = deck.getCards();
+
+        var index = deck.getIndexStartCard();
+        var foundIndex = -1;
+
+        shuffledCards.forEach(function(item,index){
+            item.forEach(function(i){
+                if(i.getSuit() == 3 && i.getKind() == 3){
+                    foundIndex = index;
+                }
+            });        
+        });
+
+        expect(foundIndex != -1).to.equal(true);
+        expect(index == foundIndex).to.equal(true);
+
+
+        
+    });
+
+
+
 })
