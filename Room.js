@@ -20,6 +20,7 @@ function Room(seq, mode){
     this._bots = [];
     this._playerReady = 0;
     this._deck = new Deck();
+    this._playerIdWithTurn = undefined;
 }
 
 //  Public methods  //
@@ -63,24 +64,28 @@ Room.prototype.sendPlayers = function sendPlayers(connection,code){
 Room.prototype.addReady = function addReady(){
 
     this._playerReady++;
+    
     if(this._playerReady == this._players.length){
 
-        var turnPlayerId = undefined;
+        var player = undefined;
         var index =  this._deck.getIndexStartCard();
         
         console.log("user with diamond 3, " + index.toString());
 
         if(index <= (this._players.length -1)){
-            turnPlayerId = this._players[index].getUserId();
+            player = this._players[index];
         }else{
-            var bot =  this._bots[index-this._players.length];
-            turnPlayerId = bot.getUserId();
+            player = this._bots[index-this._players.length];
         }
 
+        player = this._players[0];
+
         this._players.forEach(function(item){
-            var msg = new Message(Constants.STARTGAME_CODE,{"turn":turnPlayerId});
+            var msg = new Message(Constants.STARTGAME_CODE,{});
             MessageQueue.send(item.getConn(), [msg]);
-        });        
+        });
+                
+        this.switchTurn(player.getUserId(),player.getPhotoId());        
     }
 
 }
@@ -130,15 +135,68 @@ Room.prototype.addPlayer = function addPlayer(connection, code, avatarId){
     MessageQueue.send(connection,[new Message(code,{"userId":id})]);
 }
 
+
+Room.prototype.addDealtCardsToPlayer = function addDealtCardsToPlayer(userId, data){
+
+    var player = undefined;
+
+    this._players.forEach(function(item){
+        if(item.getUserId() == userId){
+            item.addDealtCards(data);
+            found = true;   
+            player = item;
+        }
+    });
+    
+    /* send the dealt cards data to all player */
+    
+    var data = {"userId":player.getUserId(),"cards":player.getDealtCards()};
+
+    this._players.forEach(function(item){
+        var msg = new Message(Constants.DEALCARD_CODE,data);
+        MessageQueue.send(item.getConn(),[msg]); 
+    });
+    
+    
+    
+    
+}
+
+
+
 // end public methods
 
 
 //  Private methods  //
 
+
+Room.prototype.switchTurn = function switchTurn(id, photoId){
+	
+	
+	var turn = undefined;
+	var turnPhotoId = undefined;
+	
+	if(id != undefined){
+		
+		this._playerIdWithTurn = id;
+		turn = id;
+		turnPhotoId = photoId;
+	}
+	
+	
+	this._players.forEach(function(item){
+        var msg = new Message(Constants.MOVE_CODE,
+        {"turn":turn,"photoId":turnPhotoId}
+        );
+        MessageQueue.send(item.getConn(),[msg]); 
+    });
+	
+}
+
 Room.prototype.manageCards = function manageCards(){
 
-    this._deck.shuffle();
 
+    this._deck.shuffle();
     var cards = this._deck.getCards();
     var counter = 0;
 
