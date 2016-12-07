@@ -76,6 +76,14 @@ function lobbyDetailsCodeHandler(data,rooms,connection){
 
 }
 
+function dealCardCodeHandler(data,rooms){
+
+    var userId = data.userId;
+    var room = getRoomWithUserId(userId,rooms);
+    room.addDealtCardsToPlayer(userId,data.data);
+
+}
+
 Game.prototype.handleMessage = function(connection,dt){
 
     var data = JSON.parse(dt);
@@ -97,6 +105,10 @@ Game.prototype.handleMessage = function(connection,dt){
 
         case Constant.LOBBYDETAILS_CODE:
             lobbyDetailsCodeHandler(data,this._rooms,connection);
+            break;
+
+        case Constant.DEALCARD_CODE:
+            dealCardCodeHandler(data,this._rooms);
             break;
     }
 
