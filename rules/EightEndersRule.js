@@ -12,7 +12,7 @@ EightEndersRule.prototype.getId = function getId(){
     return this.ruleId;
 }
 
-EightEndersRule.checkCard = function checkCard(cards){
+EightEndersRule.prototype.checkCard = function checkCard(cards){
     return (cards.indexOf(EIGHT_NUMBER) == -1);
 }
 
