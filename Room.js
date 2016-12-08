@@ -21,6 +21,7 @@ function Room(seq, mode){
     this._playerReady = 0;
     this._deck = new Deck();
     this._playerIdWithTurn = undefined;
+    this._firstDealt = true;
 }
 
 //  Public methods  //
@@ -85,7 +86,8 @@ Room.prototype.addReady = function addReady(){
             MessageQueue.send(item.getConn(), [msg]);
         });
                 
-        this.switchTurn(player.getUserId(),player.getPhotoId());        
+         this._playerIdWithTurn = player.getUserId();       
+     
     }
 
 }
@@ -136,6 +138,7 @@ Room.prototype.addPlayer = function addPlayer(connection, code, avatarId){
 }
 
 
+
 Room.prototype.addDealtCardsToPlayer = function addDealtCardsToPlayer(userId, data){
 
     var player = undefined;
@@ -148,6 +151,7 @@ Room.prototype.addDealtCardsToPlayer = function addDealtCardsToPlayer(userId, da
         }
     });
     
+    
     /* send the dealt cards data to all player */
     
     var data = {"userId":player.getUserId(),"cards":player.getDealtCards()};
@@ -157,41 +161,134 @@ Room.prototype.addDealtCardsToPlayer = function addDealtCardsToPlayer(userId, da
         MessageQueue.send(item.getConn(),[msg]); 
     });
     
-    
-    
+    this._firstDealt = false;
     
 }
 
+Room.prototype.switchTurn = function switchTurn(id){
+	
+	
+	var turn = undefined;
+	var turnPhotoId = undefined;
+	var data = undefined;
+	
+	
+	var indexCurrPlayer = getIndexForId(this._playerIdWithTurn,this._players);
+	var player = undefined;
+	var nextIndex = undefined;
+
+
+
+	if(this._firstDealt){
+		
+		player = getPlayerForIndex(indexCurrPlayer,this._players,this._bots);
+		
+		
+	}else{
+		
+		if(indexCurrPlayer == 0){
+			
+			nextIndex = 3;
+			
+		}else if(indexCurrPlayer == 1){
+			
+			nextIndex = 2;
+			
+		}else if(indexCurrPlayer == 2){
+			
+			nextIndex = 0;
+			
+		}else if(indexCurrPlayer == 3){
+			
+			nextIndex = 1;
+			
+		}
+		
+		
+		player = getPlayerForIndex(nextIndex,this._players,this._bots);
+		
+	}
+	
+	
+	turn = player.getUserId();
+	turnPhotoId = player.getPhotoId();
+
+	
+	if(this._firstDealt){
+		
+		data =  {"turn":turn,"photoId":turnPhotoId};
+		
+	}else{
+		
+		data = {"turn":turn,"photoId":turnPhotoId,
+		"prevTurnId":this._playerIdWithTurn};
+		
+		this._playerIdWithTurn = player.getUserId();
+		
+	}
+	
+
+	this._players.forEach(function(item){
+        var msg = new Message(Constants.MOVE_CODE, data);
+        MessageQueue.send(item.getConn(),[msg]); 
+    });
+
+    
+	
+}
 
 
 // end public methods
 
 
+
 //  Private methods  //
 
 
-Room.prototype.switchTurn = function switchTurn(id, photoId){
+function getIndexForId(id,players){
 	
+	var idx = undefined;
 	
-	var turn = undefined;
-	var turnPhotoId = undefined;
-	
-	if(id != undefined){
+	players.forEach(function(item,index){
 		
-		this._playerIdWithTurn = id;
-		turn = id;
-		turnPhotoId = photoId;
-	}
+		if(item.getUserId() == id){
+
+			idx = index;
+			
+		}
+		
+	});
+	
+	return idx;
+}
+
+
+function getPlayerForIndex(index, players, bots){
 	
 	
-	this._players.forEach(function(item){
-        var msg = new Message(Constants.MOVE_CODE,
-        {"turn":turn,"photoId":turnPhotoId}
-        );
-        MessageQueue.send(item.getConn(),[msg]); 
-    });
+	var player = undefined
+	
+	
+	if(index <= (players.length -1)){
+		
+		
+		player = players[index];
+		
+    }else{
+
+		player = bots[index-players.length];
+		
+    }
+	
+	return player;
 	
 }
+
+
+
+
+
+
 
 Room.prototype.manageCards = function manageCards(){
 
@@ -211,6 +308,8 @@ Room.prototype.manageCards = function manageCards(){
         item.addCard(cards[counter++]);
     });
 }
+
+
 
 Room.prototype.addBot = function addBot(numOfBots){
 
