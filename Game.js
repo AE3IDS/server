@@ -84,6 +84,15 @@ function dealCardCodeHandler(data,rooms){
 
 }
 
+
+function endDistributeHandler(data, rooms){
+	
+	var userId = data.data.userId;
+    var room = getRoomWithUserId(userId,rooms);
+    room.switchTurn(userId);
+	
+}
+
 Game.prototype.handleMessage = function(connection,dt){
 
     var data = JSON.parse(dt);
@@ -110,6 +119,11 @@ Game.prototype.handleMessage = function(connection,dt){
         case Constant.DEALCARD_CODE:
             dealCardCodeHandler(data,this._rooms);
             break;
+            
+		case Constant.ENDDISTRIBUTE:
+			endDistributeHandler(data,this._rooms);
+			break;
+			
     }
 
 
