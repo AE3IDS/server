@@ -123,7 +123,7 @@ Room.prototype.getRoomId = function getRoomId(){
 }
 
 
-Room.prototype.addPlayer = function addPlayer(connection, code, avatarId){
+Room.prototype.addPlayer = function addPlayer(connection, avatarId){
 	
 	var newPlayer = new Player(avatarId,connection);
 	       
@@ -132,9 +132,8 @@ Room.prototype.addPlayer = function addPlayer(connection, code, avatarId){
     var id = newPlayer.getUserId();
     this._players.push(newPlayer);
 
-    //var m = new Message(code,{"userId":id});
-    console.log("asdfs");
-    MessageQueue.send(connection,[new Message(code,{"userId":id})]);
+    var msg = new Message(Constant.LOBBYDETAILS_CODE,{"userId":id});
+    MessageQueue.send(connection,[msg]);
 }
 
 
