@@ -132,7 +132,7 @@ Room.prototype.addPlayer = function addPlayer(connection, avatarId){
     var id = newPlayer.getUserId();
     this._players.push(newPlayer);
 
-    var msg = new Message(Constant.LOBBYDETAILS_CODE,{"userId":id});
+    var msg = new Message(Constants.LOBBYDETAILS_CODE,{"userId":id});
     MessageQueue.send(connection,[msg]);
 }
 
