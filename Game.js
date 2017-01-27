@@ -2,7 +2,8 @@
 var Constant = require('./Constants');
 var jsonmaker = require('./JSONMaker');
 var Room = require('./Room');
-
+var MessageQueue = require('./MessageQueue');
+var Message = require('./Message');
 
 function Game(){
 
@@ -43,6 +44,8 @@ function createRoom(rooms, rules, mode){
     return  room;
 	
 }
+
+
 
 exports.Game = function(){
     return new Game();
@@ -93,6 +96,23 @@ function endDistributeHandler(data, rooms){
 	
 }
 
+function roomListHandler(conn, rooms){
+    
+    var rooms1 = [];
+
+    rooms.forEach(function(item){
+    
+        var room = {"roomId":item.getRoomId(),
+                    "numOfPlayers":item.getNumberOfPlayers()}
+        
+        rooms1.push(room);
+    });
+
+    var msg = new Message(Constant.ROOMLIST_CODE,rooms1);
+    MessageQueue.send(conn,[msg]);
+}
+
+
 Game.prototype.handleMessage = function(connection,dt){
 
     var data = JSON.parse(dt);
@@ -123,6 +143,13 @@ Game.prototype.handleMessage = function(connection,dt){
 		case Constant.ENDDISTRIBUTE:
 			endDistributeHandler(data,this._rooms);
 			break;
+
+        case Constant.ROOMLIST_CODE:
+            roomListHandler(connection,this._rooms);
+            break;
+
+        case Constant.JOINGAME_CODE:
+            
 			
     }
 
