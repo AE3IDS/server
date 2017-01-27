@@ -237,6 +237,12 @@ Room.prototype.switchTurn = function switchTurn(id){
 	
 }
 
+Room.prototype.getNumberOfPlayers = function getNumberOfPlayers(){
+
+    return this._players.length;
+    
+}
+
 
 // end public methods
 
@@ -265,23 +271,15 @@ function getIndexForId(id,players){
 
 function getPlayerForIndex(index, players, bots){
 	
-	
 	var player = undefined
 	
-	
 	if(index <= (players.length -1)){
-		
-		
 		player = players[index];
-		
     }else{
-
 		player = bots[index-players.length];
-		
     }
 	
 	return player;
-	
 }
 
 
@@ -291,7 +289,6 @@ function getPlayerForIndex(index, players, bots){
 
 
 Room.prototype.manageCards = function manageCards(){
-
 
     this._deck.shuffle();
     var cards = this._deck.getCards();
@@ -322,7 +319,6 @@ Room.prototype.addBot = function addBot(numOfBots){
         var botPhotoIds = this._bots.map(function(item){
             return item.getPhotoId();
         })
-
 
         var bt = new Bot(selectedPhotoIds.concat(botPhotoIds));
         this._bots.push(bt);
