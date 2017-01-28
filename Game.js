@@ -112,6 +112,20 @@ function roomListHandler(conn, rooms){
     MessageQueue.send(conn,[msg]);
 }
 
+function joinGameHandler(conn, data, rooms){
+
+    var joinRoomId = data.data.roomId;
+    var joinAvatar = data.data.avatarId;
+
+    rooms.forEach(function(room){
+
+        if(room.getRoomId() == joinRoomId){
+            room.addPlayer(conn,joinAvatar);
+        }
+
+    });
+}
+
 
 Game.prototype.handleMessage = function(connection,dt){
 
@@ -149,6 +163,8 @@ Game.prototype.handleMessage = function(connection,dt){
             break;
 
         case Constant.JOINGAME_CODE:
+            joinGameHandler(connection,data,this._rooms);
+            break;
             
 			
     }
