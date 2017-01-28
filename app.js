@@ -13,7 +13,7 @@ ws.on('connection',function(sock){
     sock.on('message',function(msg){
            
         console.log("receive data".yellow);
-        //console.log(msg);
+        console.log(msg);
         console.log("\n");
         
         Game.handleMessage(sock,msg);     
