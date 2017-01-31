@@ -6,18 +6,11 @@ var Player = require('../Player');
 
 describe("EightEndersRuleTest",function(){
     
-    it("getId() shall return a value of 1",function(){
+    it("getId() shall return a value of R1",function(){
         
         var eRule = new EightRule();
-        var id = eRule.getId() == 1;
+        var id = eRule.getId() == "R1";
         expect(id).to.equal(true);
-
-    })
-
-    it("isActive shall return true after calling activate",function(){
-        var eRule = new EightRule();
-        eRule.activate();
-        expect(eRule.isActive()).to.equal(true);
     })
     
     it("checkCard shall return true if the array consists of more than one 8's",function(){
