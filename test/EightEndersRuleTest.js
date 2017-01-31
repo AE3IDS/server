@@ -12,6 +12,13 @@ describe("EightEndersRuleTest",function(){
         var id = eRule.getId() == "R1";
         expect(id).to.equal(true);
     })
+
+    it("getRuleName should return Eight Enders",function(){
+        
+        var eRule = new EightRule();
+        var name = eRule.getRuleName() == "Eight Enders";
+        expect(name).to.equal(true);
+    });
     
     it("checkCard shall return true if the array consists of more than one 8's",function(){
     
