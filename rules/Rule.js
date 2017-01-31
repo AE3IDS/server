@@ -1,17 +1,26 @@
 
-function Rule(activate,id){
-    this.active = activate;
+function Rule(name,description,id)
+{    
+    this.ruleName = name;
+    this.description = description;
     this.ruleId = id;
 }
 
 Rule.prototype.checkCard = function checkCard(card){}
-Rule.prototype.getId = function getId(){}
-Rule.prototype.activate = function activate(){
-    this.active = true;
+
+Rule.prototype.getId = function getId()
+{    
+    return this.ruleId;   
 }
 
-Rule.prototype.isActive = function isActive(){
-    return this.active;
+Rule.prototype.getRuleName = function getRuleName()
+{
+    return this.ruleName;
+}
+
+Rule.prototype.getRuleDescription = function getRuleDescription()
+{
+    return this.description;
 }
 
 module.exports = Rule;
