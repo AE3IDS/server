@@ -30,6 +30,45 @@ RulesHandler.prototype.getAvailableRules = function getAvailableRules()
     return rules;
 }
 
+RulesHandler.prototype.getRules = function getRules(ruleIds)
+{
+    rules = [];
+    tempRules = this._rules;
+
+    ruleIds.forEach(function(item,index){
+        
+        var ruleIndex = -1;
+        
+        for(var i = 0;i < tempRules.length;i++)
+        {
+            if(tempRules[i].getId() == item)
+            {
+                ruleIndex = i;
+                break;
+            }
+        }    
+
+
+        switch(ruleIndex)
+        {
+            case 0:
+                rules.push(new Jack());
+                break;
+            case 1:
+                rules.push(new Revolution());
+                break;
+            case 2:
+                rules.push(new Eight());
+                break;
+            case 3:
+                rules.push(new Jokers());
+                break;
+        }
+
+    });
+    
+    return rules;
+}
     
 module.exports = RulesHandler;
 
