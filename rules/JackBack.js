@@ -11,7 +11,7 @@ function JackBack(){
     Rule.call(this,name,description,ruleId);
 }
 
-EightEndersRule.prototype = new Rule();
+JackBack.prototype = new Rule();
 
 module.exports = JackBack;
 
