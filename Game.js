@@ -43,12 +43,6 @@ exports.Game = function(){
     return new Game();
 }
 
-function greetCodeHandler(data, rooms,connection){
-
-    var room = getRoomForUserId(data.data.userId,rooms);
-    room.sendRoomDetails(connection,Constant.GREET_CODE);
-    room.sendPlayers(connection,Constant.NEWPLAYER_CODE);
-}
 
 function cardCodeHandler(data,rooms){
 
@@ -74,6 +68,14 @@ function lobbyDetailsCodeHandler(data, rooms, conn)
     rooms.push(room);
 
     room.addPlayer(conn, data.data.avatar);
+}
+
+/* 2nd Function called */
+
+function greetCodeHandler(data, rooms,connection)
+{
+    var room = getRoomForUserId(data.data.userId,rooms);
+    room.initialize(connection,Constant.NEWPLAYER_CODE);
 }
 
 
