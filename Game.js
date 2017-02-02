@@ -14,7 +14,7 @@ function Game(){
     this._rulesHandler = new RulesHandler();
 }
 
-function getRoomWithUserId(id,rooms){
+function getRoomForUserId(id,rooms){
 
     var foundRoom = false;
     var room = undefined;
@@ -45,21 +45,21 @@ exports.Game = function(){
 
 function greetCodeHandler(data, rooms,connection){
 
-    var room = getRoomWithUserId(data.data.userId,rooms);
+    var room = getRoomForUserId(data.data.userId,rooms);
     room.sendRoomDetails(connection,Constant.GREET_CODE);
     room.sendPlayers(connection,Constant.NEWPLAYER_CODE);
 }
 
 function cardCodeHandler(data,rooms){
 
-    var room = getRoomWithUserId(data.data.userId,rooms);
+    var room = getRoomForUserId(data.data.userId,rooms);
     room.getCards(data.data.userId);
 
 }
 
 function readyCodeHandler(data,rooms){
  
-    var room = getRoomWithUserId(data.data.userId,rooms);
+    var room = getRoomForUserId(data.data.userId,rooms);
     room.addReady();
 
 }
@@ -80,7 +80,7 @@ function lobbyDetailsCodeHandler(data, rooms, conn)
 function dealCardCodeHandler(data,rooms){
 
     var userId = data.userId;
-    var room = getRoomWithUserId(userId,rooms);
+    var room = getRoomForUserId(userId,rooms);
     room.addDealtCardsToPlayer(userId,data.data);
 
 }
@@ -89,7 +89,7 @@ function dealCardCodeHandler(data,rooms){
 function endDistributeHandler(data, rooms){
 	
 	var userId = data.data.userId;
-    var room = getRoomWithUserId(userId,rooms);
+    var room = getRoomForUserId(userId,rooms);
     room.switchTurn(userId);
 	
 }
