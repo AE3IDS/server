@@ -8,10 +8,11 @@ var Deck = require('./Deck');
 var Message = require('./Message');
 var MessageQueue = require('./MessageQueue');
 
-function Room(seq, mode){
+function Room(seq, rules, mode){
 
 	var randomAlphabet = Chance.character({pool:'ABCDEFGHIJKLMNOPQRSTUVWYZ'});
     
+    this._rules = rules;
     this._mode = mode;
 	this._roomId = randomAlphabet + seq.toString();
 	this._roundNum = 1;
