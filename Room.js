@@ -14,6 +14,8 @@ function Room(seq, rules, mode){
     
     this._rules = rules;
     this._mode = mode;
+    this._state = 0;
+    
 	this._roomId = randomAlphabet + seq.toString();
 	this._roundNum = 1;
 	this._maxNumberOfPeople = 4;
@@ -39,16 +41,27 @@ Room.prototype.sendRoomDetails = function sendRoomDetails(connection,code){
 
 Room.prototype.initialize = function initialize(connection){
 
-    if(this._mode == 0){
-
-        // Singleplayer mode
+	// Singleplayer mode
+	
+    if(this._mode == "0")
+    {    
+        this._state = 1;
         
-        this.addBot(connection, 3);
-
-    }else if(this._mode == 2){
+        this.sendState(connection);
+        this.addBot(connection, 3);  
+    }
+    else if(this._mode == 2){
     
         // When multiplayer mode
     }
+}
+
+Room.prototype.sendState = function sendState(conn)
+{
+	var data = {"state":this._state};
+	var msg = new Message(Constants.STATE_CODE,data);
+	
+	MessageQueue.send(conn, [msg]);
 }
 
 Room.prototype.addBot = function addBot(conn, numOfBots){
