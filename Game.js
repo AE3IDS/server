@@ -4,11 +4,14 @@ var jsonmaker = require('./JSONMaker');
 var Room = require('./Room');
 var MessageQueue = require('./MessageQueue');
 var Message = require('./Message');
+var RulesHandler = require('./rules/RulesHandler');
+
+
 
 function Game(){
 
     this._rooms = [];
-
+    this._rulesHandler = new RulesHandler();
 }
 
 function getRoomWithUserId(id,rooms){
@@ -36,17 +39,6 @@ function joinRoom(roomId, rooms,avatarId){
 
 }
 
-function createRoom(rooms, rules, mode){
- 
-    var room = new Room(rooms.length+1, mode);
-    rooms.push(room);
-        
-    return  room;
-	
-}
-
-
-
 exports.Game = function(){
     return new Game();
 }
@@ -72,12 +64,18 @@ function readyCodeHandler(data,rooms){
 
 }
 
-function lobbyDetailsCodeHandler(data,rooms,connection){
-    
-    var room = createRoom(rooms,data.data.rules,data.data.mode);
-    room.addPlayer(connection, Constant.LOBBYDETAILS_CODE, data.data.avatar);
+/* 1st Function Called */
 
+function lobbyDetailsCodeHandler(data, rooms, conn)
+{    
+    var rules = this._rulesHandler.getRules(data.data.rules);
+    
+    var room = new Room(rooms.length+1, rules, data.data.mode);
+    rooms.push(room);
+
+    room.addPlayer(conn, data.data.avatar);
 }
+
 
 function dealCardCodeHandler(data,rooms){
 
@@ -126,6 +124,12 @@ function joinGameHandler(conn, data, rooms){
     });
 }
 
+function fetchRuleHandler(conn, ruleHandler)
+{
+    var rules = ruleHandler.getAvailableRules();
+    var msg = new Message(Constant.FETCHRULE_CODE,rules);
+    MessageQueue.send(conn,[msg]);
+}
 
 Game.prototype.handleMessage = function(connection,dt){
 
@@ -166,8 +170,10 @@ Game.prototype.handleMessage = function(connection,dt){
             joinGameHandler(connection,data,this._rooms);
             break;
             
-			
-    }
+        case Constant.FETCHRULE_CODE:
+            fetchRuleHandler(connection,this._rulesHandler);
+            break;
+    }       
 
 
     if(output != undefined){
