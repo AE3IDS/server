@@ -37,31 +37,64 @@ Room.prototype.sendRoomDetails = function sendRoomDetails(connection,code){
     MessageQueue.send(connection,[new Message(code,details)]);
 }
 
-Room.prototype.sendPlayers = function sendPlayers(connection,code){
+Room.prototype.initialize = function initialize(connection){
 
+    if(this._mode == 0){
+
+        // Singleplayer mode
         
-    if(this._mode == 1){
-
-        // When singleplayer mode
-        this.manageCards();
-        this.addBot(3);
-
-        var dt = this._bots.map(function(item){
-            var msg = new Message(Constants.NEWPLAYER_CODE,
-                {"userId":item.getUserId(),"photoId":item.getPhotoId()});
-            return msg;
-        });
-        
-        dt.push(new Message(Constants.GAMEROOM_OCCUPIED,{}));
-        MessageQueue.send(connection,dt);
+        this.addBot(connection, 3);
 
     }else if(this._mode == 2){
     
         // When multiplayer mode
     }
-
-   
 }
+
+Room.prototype.addBot = function addBot(conn, numOfBots){
+
+    var players = this._players;
+    var bots = this._bots;
+
+    var timer = setInterval(function(){
+        
+        /* populate all photo Ids */
+
+        var selectedPhotoIds  = players.map(function(item){
+           return item.getPhotoId();
+        })
+
+        var botPhotoIds = bots.map(function(item){
+           return item.getPhotoId();
+        })
+    
+        var allPhotoIds = selectedPhotoIds.concat(botPhotoIds);
+
+        /* end populate */
+
+        var bt = new Bot(allPhotoIds);
+        bots.push(bt);
+
+        /* Send bot to clients */
+
+        var msg = new Message(Constants.NEWPLAYER_CODE,
+                {"userId":bt.getUserId(),"photoId":bt.getPhotoId()});
+         
+        MessageQueue.send(conn,[msg]);
+
+        /* End Send Bot */        
+
+        numOfBots--;
+
+        if(numOfBots == 0)
+        {
+            clearInterval(timer);
+        }
+
+    },900);
+
+}
+
 
 Room.prototype.addReady = function addReady(){
 
@@ -308,22 +341,7 @@ Room.prototype.manageCards = function manageCards(){
 
 
 
-Room.prototype.addBot = function addBot(numOfBots){
 
-    for(var i = 0; i < numOfBots;i++){
-        
-        var selectedPhotoIds  = this._players.map(function(item){
-            return item.getPhotoId();
-        })
-
-        var botPhotoIds = this._bots.map(function(item){
-            return item.getPhotoId();
-        })
-
-        var bt = new Bot(selectedPhotoIds.concat(botPhotoIds));
-        this._bots.push(bt);
-    }
-}
 
 function sendRoomOccupiedMessage(connection, time){
 
