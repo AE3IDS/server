@@ -39,16 +39,15 @@ Room.prototype.sendRoomDetails = function sendRoomDetails(connection,code){
     MessageQueue.send(connection,[new Message(code,details)]);
 }
 
-Room.prototype.initialize = function initialize(connection){
+Room.prototype.requestPlayers = function requestPlayers(connection,userId){
 
 	// Singleplayer mode
 	
     if(this._mode == "0")
     {    
         this._state = 1;
-        
         this.sendState(connection);
-        this.addBot(connection, 3);  
+        this.addBot(connection, 3);          
     }
     else if(this._mode == 2){
     
@@ -69,11 +68,9 @@ Room.prototype.addBot = function addBot(conn, numOfBots){
     var players = this._players;
     var bots = this._bots;
 
-    var timer = setInterval(function(){
-        
-        /* populate all photo Ids */
-
-        var selectedPhotoIds  = players.map(function(item){
+    while(numOfBots != 0)
+    {
+    	 var selectedPhotoIds  = players.map(function(item){
            return item.getPhotoId();
         })
 
@@ -86,26 +83,21 @@ Room.prototype.addBot = function addBot(conn, numOfBots){
         /* end populate */
 
         var bt = new Bot(allPhotoIds);
-        bots.push(bt);
-
-        /* Send bot to clients */
-
-        var msg = new Message(Constants.NEWPLAYER_CODE,
-                {"userId":bt.getUserId(),"photoId":bt.getPhotoId()});
-         
-        MessageQueue.send(conn,[msg]);
-
-        /* End Send Bot */        
+       	this._bots.push(bt);       
 
         numOfBots--;
+    }
 
-        if(numOfBots == 0)
-        {
-            clearInterval(timer);
-        }
+    /* Send bot to clients */
 
-    },900);
+	var data = this._bots.map(function(item){
+		return {"userId":item.getUserId(),"photoId":item.getPhotoId()}
+	});
 
+	var msg = new Message(Constants.NEWPLAYER_CODE,data);     
+    MessageQueue.send(conn,[msg]);
+        
+    // e.emit('avatar');	
 }
 
 
