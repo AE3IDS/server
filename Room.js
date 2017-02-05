@@ -201,30 +201,20 @@ Room.prototype.getTurn = function getTurn(conn, userId)
 /* ==================================================== */
 
 
-Room.prototype.addPlayerMove = function addPlayerMove(userId, data){
-
-    var players = this._players.filter(function(item){
-    	return (item.getUserId() == userId);
-    })
-
-    var player = players.pop();
+Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
+{
+    var player = this.getPlayerWithId(userId);
     player.addDealtCards(data);
 
     var data = {"userId":player.getUserId(),"cards":player.getDealtCards()};
-
     this.sendToAll(Constants.MOVE_CODE, data);
 }
 
 
-Room.prototype.passTurnHandler = function passTurnHandler(userId){
-
-    var passPlayer = this._players.filter(function(item){
-    	return (item.getUserId() == userId);
-    })
-    
-    var player = passPlayer.pop();    
+Room.prototype.passTurnHandler = function passTurnHandler(userId)
+{
+    var player = this.getPlayerWithId(userId);  
     var data = {"userId":player.getUserId(),"photoId":player.getPhotoId()};
-
     this.sendToAll(Constants.PASSTURN_CODE,data)
 }
 
@@ -284,6 +274,13 @@ Room.prototype.requestCards = function requestCards(){
 				/* Private methods */
 
 /* ==================================================== */
+
+
+Room.prototype.getPlayerWithId = function getPlayerWithId(userId)
+{
+	var playerIndex = getIndexForId(userId, this._players);
+	return this._players[playerIndex];
+}
 
 
 Room.prototype.multiplayer = function multiplayer(conn)
@@ -366,7 +363,7 @@ Room.prototype.sendToAll = function sendToAll(code, data)
 
 function getIndexForId(id,players){
 	
-	var idx = undefined;
+	var idx = -1;
 
 	players.forEach(function(item,index){
 		
