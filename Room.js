@@ -285,11 +285,20 @@ Room.prototype.requestCards = function requestCards(){
 /* ==================================================== */
 
 
-Room.prototype.sendState = function sendState()
+Room.prototype.sendState = function sendState(conn)
 {
 	var data = {"state":this._state}
-	this.sendToAll(Constants.STATE_CODE,data);
+	
+	if(conn == undefined)
+	{
+		this.sendToAll(Constants.STATE_CODE,data);
+	}
+	else
+	{
+		this.sendTo(conn,Constants.STATE_CODE,data);
+	}
 }
+
 
 Room.prototype.manageCards = function manageCards(){
 
