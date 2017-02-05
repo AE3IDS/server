@@ -9,6 +9,17 @@ function Player(avatarId, conn){
     this._cards = [];
 	this._userId = Chance.string({length:5});
     this._connection = conn;
+    this._hasFirstDealt = false;
+}
+
+Player.prototype.setFirstDealt = function setFirstDealt(firstDealt)
+{
+    this._hasFirstDealt = firstDealt;
+}
+
+Player.prototype.getFirstDealt = function getFirstDealt()
+{
+    return this._hasFirstDealt;
 }
 
 Player.prototype.getConn = function getConn(){
@@ -24,7 +35,7 @@ Player.prototype.addDealtCards = function addDealtCards(data){
     var dealtCards = this._dealtCards;
 
     data.forEach(function(item){
-        var n = new Card(item["suit"],item["kind"]);
+        var n = new Card(item["_suit"],item["_rank"]);
         dealtCards.push(n);       
     })
 
@@ -36,7 +47,7 @@ Player.prototype.getDealtCards = function getDealtCards(){
 }
 
 Player.prototype.addCard = function addCard(card){
-    this._cards.push(card);
+    this._cards = card
 }
 
 Player.prototype.hasCard = function hasCard(card){
