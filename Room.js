@@ -249,46 +249,36 @@ Room.prototype.addPlayer = function addPlayer(connection, avatarId){
 
 
 
-Room.prototype.requestCards = function requestCards(conn, userId){
-
+Room.prototype.requestCards = function requestCards(){
 
 	this._state = 2;
-	this.sendState(conn);
+	this.sendState();
 	this.manageCards();
 
-	var g = [this._players,this._bots];
-	
-	g.forEach(function(item)
-	{	
-		item.forEach(function(i)
-		{
-			var card = i.getCard();
-			var data = undefined;
+	var players = this._players;
+	var bots = this._bots;
+	var _this = this;
 
-			if(i.getUserId() == userId)
-			{
-				data = {"cards":card};	
-			}
-			else
-			{
-				data = {"cards":card.length};
-			}
+	players.forEach(function(i)
+	{
+		var otherPlayers = players.filter(function(item){
+			return (i.getUserId() != item.getUserId())
+		});
 
-			data["userId"] = i.getUserId();
-			
-			var msg = new Message(Constants.CARD_CODE,data);
-			MessageQueue.send(conn,[msg]); 
-		})
+		otherPlayers = otherPlayers.concat(bots);
+
+		otherPlayers.forEach(function(h){
+			var data = {"cards":h.getCard().length, "userId":h.getUserId()};
+			_this.sendTo(i.getConn(), Constants.CARD_CODE, data);
+		});
+
+		var playerCard = i.getCard();
+		var data = {"cards":playerCard,"userId":i.getUserId()};
+		_this.sendTo(i.getConn(), Constants.CARD_CODE, data)
 	})
 
+
 }
-
-
-
-
-
-
-
 
 // end public methods
 
@@ -323,6 +313,13 @@ Room.prototype.manageCards = function manageCards(){
     this._bots.forEach(function(item){
         item.addCard(cards[counter++]);
     });
+}
+
+
+Room.prototype.sendTo = function sendTo(conn, code, data)
+{
+	var msg = new Message(code,data);
+    MessageQueue.send(conn,[msg]); 
 }
 
 
