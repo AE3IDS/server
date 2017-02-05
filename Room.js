@@ -39,6 +39,33 @@ Room.prototype.sendRoomDetails = function sendRoomDetails(connection,code){
     MessageQueue.send(connection,[new Message(code,details)]);
 }
 
+Room.prototype.getNumberOfPlayers = function getNumberOfPlayers()
+{
+    return this._players.length;
+}
+
+Room.prototype.getRoomId = function getRoomId()
+{
+    return this._roomId;
+}
+
+Room.prototype.checkPlayerWithId = function checkPlayerWithId(userId){
+
+    var players = this._players.filter(function(item){
+    	return (item.getUserId() == userId);
+    })
+
+	return (players.length != 0);
+}
+
+
+/* ==================================================== */
+
+				/* Code Handlers */
+
+/* ==================================================== */
+
+
 Room.prototype.requestPlayers = function requestPlayers(connection,userId){
 
 	// Singleplayer mode
@@ -55,13 +82,7 @@ Room.prototype.requestPlayers = function requestPlayers(connection,userId){
     }
 }
 
-Room.prototype.sendState = function sendState(conn)
-{
-	var data = {"state":this._state};
-	var msg = new Message(Constants.STATE_CODE,data);
-	
-	MessageQueue.send(conn, [msg]);
-}
+
 
 Room.prototype.addBot = function addBot(conn, numOfBots){
 
@@ -100,65 +121,116 @@ Room.prototype.addBot = function addBot(conn, numOfBots){
     // e.emit('avatar');	
 }
 
+/* ==================================================== */
 
-Room.prototype.addReady = function addReady(){
+			/* Turn switching feature */
 
-    this._playerReady++;
-    
-    if(this._playerReady == this._players.length){
+/* ==================================================== */
 
-        var player = undefined;
-        var index =  this._deck.getIndexStartCard();
-        
-        console.log("user with diamond 3, " + index.toString());
 
-        if(index <= (this._players.length -1)){
-            player = this._players[index];
-        }else{
-            player = this._bots[index-this._players.length];
-        }
+Room.prototype.firstDealtTurn = function firstDealtTurn (){
 
-        player = this._players[0];
+    var index =  this._deck.getIndexStartCard();
+ 	var player = getPlayerForIndex(index, this._players, this._bots);
 
-        this._players.forEach(function(item){
-            var msg = new Message(Constants.STARTGAME_CODE,{});
-            MessageQueue.send(item.getConn(), [msg]);
-        });
-                
-         this._playerIdWithTurn = player.getUserId();       
-     
-    }
+     player = this._players[0]; 
 
+     return player;       
 }
 
-Room.prototype.getCards = function getCards(userId){
+Room.prototype.switchTurn = function switchTurn(id){
+	
+	var indexCurrPlayer = getIndexForId(id,this._players);
+	var nextIndex = undefined;
+
+
+	if(indexCurrPlayer == 0){
+		
+		nextIndex = 2;
+		
+	}else if(indexCurrPlayer == 1){
+		
+		nextIndex = 0;
+		
+	}else if(indexCurrPlayer == 2){
+		
+		nextIndex = 3;
+
+	}else if(indexCurrPlayer == 3){
+
+		nextIndex = 1;
+
+	}
+
+
+	var player = getPlayerForIndex(nextIndex,this._players,this._bots);
+
+	return player;
+}
+
+
+Room.prototype.getTurn = function getTurn(conn, userId)
+{
+	var playerWithTurn = undefined;
+	var data = undefined;
+
+	if(this._firstDealt)
+	{
+		this._state = 4;
+		playerWithTurn = this.firstDealtTurn();
+
+		data = {"userId":playerWithTurn.getUserId(),
+    			"photoId":playerWithTurn.getPhotoId()}
+
+		this._firstDealt = false;
+		this.sendState(conn);
+	}
+	else
+	{
+		playerWithTurn = this.switchTurn(userId);
+		data = {"userId":playerWithTurn.getUserId(),
+    			"photoId":playerWithTurn.getPhotoId(),
+    			"prevTurnId":userId}
+
+	}
+
 
     this._players.forEach(function(item){
-    
-        if(item.getUserId() == userId){
-            var card = item.getCard();
-            var msg = new Message(Constants.CARD_CODE, {"cards":card[0]});
-            MessageQueue.send(item.getConn(),[msg]);       
-        }
+    	var msg = new Message(Constants.TURN_CODE,data);
+    	MessageQueue.send(item.getConn(), [msg]);
+	});
 
-    });
 }
 
-Room.prototype.checkPlayerWithId = function checkPlayerWithId(userId){
 
-	var found = false;
+/* ==================================================== */
 
-    for(var i = 0;i<this._players.length;i++){
-        found =this._players[i].getUserId() == userId;
-    }
 
-	return found;
+Room.prototype.addPlayerMove = function addPlayerMove(userId, data){
+
+    var players = this._players.filter(function(item){
+    	return (item.getUserId() == userId);
+    })
+
+    var player = players.pop();
+    player.addDealtCards(data);
+
+    var data = {"userId":player.getUserId(),"cards":player.getDealtCards()};
+
+    this.sendToAll(Constants.MOVE_CODE, data);
 }
 
-Room.prototype.getRoomId = function getRoomId(){
-    
-    return this._roomId;
 
+Room.prototype.passTurnHandler = function passTurnHandler(userId){
+
+    var passPlayer = this._players.filter(function(item){
+    	return (item.getUserId() == userId);
+    })
+    
+    var player = passPlayer.pop();    
+    var data = {"userId":player.getUserId(),"photoId":player.getPhotoId()};
+
+    this.sendToAll(Constants.PASSTURN_CODE,data)
 }
 
 
@@ -166,7 +238,7 @@ Room.prototype.addPlayer = function addPlayer(connection, avatarId){
 	
 	var newPlayer = new Player(avatarId,connection);
 	       
-    console.log("-------------- add new user --------------".rainbow);
+    console.log("-------------- add new user --------------");
 
     var id = newPlayer.getUserId();
     this._players.push(newPlayer);
@@ -177,154 +249,63 @@ Room.prototype.addPlayer = function addPlayer(connection, avatarId){
 
 
 
-Room.prototype.addDealtCardsToPlayer = function addDealtCardsToPlayer(userId, data){
+Room.prototype.requestCards = function requestCards(conn, userId){
 
-    var player = undefined;
 
-    this._players.forEach(function(item){
-        if(item.getUserId() == userId){
-            item.addDealtCards(data);
-            found = true;   
-            player = item;
-        }
-    });
-    
-    
-    /* send the dealt cards data to all player */
-    
-    var data = {"userId":player.getUserId(),"cards":player.getDealtCards()};
+	this._state = 2;
+	this.sendState(conn);
+	this.manageCards();
 
-    this._players.forEach(function(item){
-        var msg = new Message(Constants.DEALCARD_CODE,data);
-        MessageQueue.send(item.getConn(),[msg]); 
-    });
-    
-    this._firstDealt = false;
-    
+	var g = [this._players,this._bots];
+	
+	g.forEach(function(item)
+	{	
+		item.forEach(function(i)
+		{
+			var card = i.getCard();
+			var data = undefined;
+
+			if(i.getUserId() == userId)
+			{
+				data = {"cards":card};	
+			}
+			else
+			{
+				data = {"cards":card.length};
+			}
+
+			data["userId"] = i.getUserId();
+			
+			var msg = new Message(Constants.CARD_CODE,data);
+			MessageQueue.send(conn,[msg]); 
+		})
+	})
+
 }
 
-Room.prototype.switchTurn = function switchTurn(id){
-	
-	
-	var turn = undefined;
-	var turnPhotoId = undefined;
-	var data = undefined;
-	
-	
-	var indexCurrPlayer = getIndexForId(this._playerIdWithTurn,this._players);
-	var player = undefined;
-	var nextIndex = undefined;
 
 
 
-	if(this._firstDealt){
-		
-		player = getPlayerForIndex(indexCurrPlayer,this._players,this._bots);
-		
-		
-	}else{
-		
-		if(indexCurrPlayer == 0){
-			
-			nextIndex = 3;
-			
-		}else if(indexCurrPlayer == 1){
-			
-			nextIndex = 2;
-			
-		}else if(indexCurrPlayer == 2){
-			
-			nextIndex = 0;
-			
-		}else if(indexCurrPlayer == 3){
-			
-			nextIndex = 1;
-			
-		}
-		
-		
-		player = getPlayerForIndex(nextIndex,this._players,this._bots);
-		
-	}
-	
-	
-	turn = player.getUserId();
-	turnPhotoId = player.getPhotoId();
 
-	
-	if(this._firstDealt){
-		
-		data =  {"turn":turn,"photoId":turnPhotoId};
-		
-	}else{
-		
-		data = {"turn":turn,"photoId":turnPhotoId,
-		"prevTurnId":this._playerIdWithTurn};
-		
-		this._playerIdWithTurn = player.getUserId();
-		
-	}
-	
 
-	this._players.forEach(function(item){
-        var msg = new Message(Constants.MOVE_CODE, data);
-        MessageQueue.send(item.getConn(),[msg]); 
-    });
-
-    
-	
-}
-
-Room.prototype.getNumberOfPlayers = function getNumberOfPlayers(){
-
-    return this._players.length;
-    
-}
 
 
 // end public methods
 
 
 
-//  Private methods  //
+/* ==================================================== */
+
+				/* Private methods */
+
+/* ==================================================== */
 
 
-function getIndexForId(id,players){
-	
-	var idx = undefined;
-	
-	players.forEach(function(item,index){
-		
-		if(item.getUserId() == id){
-
-			idx = index;
-			
-		}
-		
-	});
-	
-	return idx;
+Room.prototype.sendState = function sendState()
+{
+	var data = {"state":this._state}
+	this.sendToAll(Constants.STATE_CODE,data);
 }
-
-
-function getPlayerForIndex(index, players, bots){
-	
-	var player = undefined
-	
-	if(index <= (players.length -1)){
-		player = players[index];
-    }else{
-		player = bots[index-players.length];
-    }
-	
-	return player;
-}
-
-
-
-
-
-
 
 Room.prototype.manageCards = function manageCards(){
 
@@ -345,17 +326,44 @@ Room.prototype.manageCards = function manageCards(){
 }
 
 
-
-
-
-function sendRoomOccupiedMessage(connection, time){
-
-    var g = setTimeout(function(){
-         var occupiedOutput = jsonmaker.makeResponseJSON({},Constants.GAMEROOM_OCCUPIED);
-         connection.send(JSON.stringify(occupiedOutput));
-    },time);
-
+Room.prototype.sendToAll = function sendToAll(code, data)
+{
+	this._players.forEach(function(item){
+        var msg = new Message(code,data);
+        MessageQueue.send(item.getConn(),[msg]); 
+    });
 }
+
+
+function getIndexForId(id,players){
+	
+	var idx = undefined;
+
+	players.forEach(function(item,index){
+		
+		if(item.getUserId() == id)
+			idx = index;
+	});
+	
+	return idx;
+}
+
+
+
+function getPlayerForIndex(index, players, bots){
+	
+	var player = undefined
+	
+	if(index <= (players.length -1)){
+		player = players[index];
+    }else{
+		player = bots[index-players.length];
+    }
+	
+	return player;
+}
+
+
 
 // end private methods // 
 
