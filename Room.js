@@ -77,7 +77,6 @@ Room.prototype.requestPlayers = function requestPlayers(connection,userId){
         this.addBot(connection, 3);          
     }
     else if(this._mode == 2){
-    
         // When multiplayer mode
     }
 }
@@ -194,12 +193,7 @@ Room.prototype.getTurn = function getTurn(conn, userId)
 
 	}
 
-
-    this._players.forEach(function(item){
-    	var msg = new Message(Constants.TURN_CODE,data);
-    	MessageQueue.send(item.getConn(), [msg]);
-	});
-
+	this.sendTo(conn,Constants.TURN_CODE,data);
 }
 
 
