@@ -76,8 +76,9 @@ Room.prototype.requestPlayers = function requestPlayers(connection,userId){
         this.sendState(connection);
         this.addBot(connection, 3);          
     }
-    else if(this._mode == 2){
-        // When multiplayer mode
+    else if(this._mode == 2)
+    {
+    	this.multiplayer(connection);    
     }
 }
 
@@ -283,6 +284,34 @@ Room.prototype.requestCards = function requestCards(){
 				/* Private methods */
 
 /* ==================================================== */
+
+
+Room.prototype.multiplayer = function multiplayer(conn)
+{
+	var sliced = this._players.slice(0,this._players.length-1);
+	var added = this._players[this._players.length-1];
+
+	var _this = this;
+
+	sliced.forEach(function(item)
+	{
+		var existPlayer = [{"userId":item.getUserId(),"photoId":item.getPhotoId()}];
+		_this.sendTo(conn,Constants.NEWPLAYER_CODE,existPlayer);
+
+		var playerAdded = [{"userId":added.getUserId(),"photoId":added.getPhotoId()}];
+		_this.sendTo(item.getConn(),Constants.NEWPLAYER_CODE,playerAdded)
+	});
+
+	if(this._players.length == 2)
+	{
+		this.requestCards();
+	}
+	else
+	{
+		this._state = 3;
+		this.sendState();
+	}
+}
 
 
 Room.prototype.sendState = function sendState(conn)
