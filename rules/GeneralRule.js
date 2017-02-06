@@ -12,6 +12,25 @@ function GeneralRule(){
 GeneralRule.prototype = new Rule();
 
 
+GeneralRule.prototype.checkCard = function checkCard(cards)
+{
+    var r = checkSameRank(cards);
+    return r;
+}
+
+GeneralRule.prototype.checkSameRank = function checkSameRank(cards)
+{
+	var pivot = cards[0];
+	var isRuleSatisfy = true;
+
+	for(var i = 1; (i < cards.length && isRuleSatisfy); i++)
+	{
+		isRuleSatisfy = cards[i].getKind() == pivot.getKind();
+	}
+
+	return isRuleSatisfy;
+}
+
 
 module.exports = GeneralRule;
 
