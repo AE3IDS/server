@@ -173,8 +173,10 @@ Room.prototype.getTurn = function getTurn(conn, userId)
 {
 	var playerWithTurn = undefined;
 	var data = undefined;
+	var player = this.getPlayerWithId(userId);
 
-	if(this._firstDealt)
+
+	if(!player.getFirstDealt())
 	{
 		this._state = 4;
 		playerWithTurn = this.firstDealtTurn();
@@ -182,8 +184,9 @@ Room.prototype.getTurn = function getTurn(conn, userId)
 		data = {"userId":playerWithTurn.getUserId(),
     			"photoId":playerWithTurn.getPhotoId()}
 
-		this._firstDealt = false;
+    	player.setFirstDealt(true);
 		this.sendState(conn);
+		this.sendTo(conn,Constants.TURN_CODE,data);
 	}
 	else
 	{
@@ -192,9 +195,8 @@ Room.prototype.getTurn = function getTurn(conn, userId)
     			"photoId":playerWithTurn.getPhotoId(),
     			"prevTurnId":userId}
 
+    	this.sendToAll(Constants.TURN_CODE,data);		
 	}
-
-	this.sendTo(conn,Constants.TURN_CODE,data);
 }
 
 
