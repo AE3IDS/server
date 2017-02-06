@@ -31,6 +31,33 @@ GeneralRule.prototype.checkSameRank = function checkSameRank(cards)
 	return isRuleSatisfy;
 }
 
+GeneralRule.prototype.checkSameSuitSequence = function checkSameSuitSequence(cards)
+{
+	var isRuleSatisfy = true;
+
+	if(cards.length >= 3)
+	{
+		for(var i = 0; (i < cards.length - 1); i++)
+		{
+			var currKind = cards[i].getKind();
+			var nextKind = cards[i+1].getKind();
+			var m = nextKind - currKind;
+
+			var currSuit = cards[i].getSuit();
+			var nextSuit = cards[i+1].getSuit();
+
+			if(m != 1 || (nextSuit != currSuit))
+				isRuleSatisfy = false;
+		}
+	}
+	else
+	{
+		isRuleSatisfy = false;
+	}
+
+	return isRuleSatisfy;
+}
+
 
 module.exports = GeneralRule;
 
