@@ -44,17 +44,10 @@ exports.Game = function(){
 }
 
 
-function cardCodeHandler(data,rooms){
-
+function turnCodeHandler(conn, data,rooms){
+    
     var room = getRoomForUserId(data.data.userId,rooms);
-    room.getCards(data.data.userId);
-
-}
-
-function readyCodeHandler(data,rooms){
- 
-    var room = getRoomForUserId(data.data.userId,rooms);
-    room.addReady();
+    room.getTurn(conn, data.data.userId);
 
 }
 
@@ -62,12 +55,12 @@ function readyCodeHandler(data,rooms){
 
 function lobbyDetailsCodeHandler(data, rooms, conn)
 {    
-    var rules = this._rulesHandler.getRules(data.data.rules);
+    //var rules = this._rulesHandler.getRules(data.data.rules);
     
-    var room = new Room(rooms.length+1, rules, data.data.mode);
+    var room = new Room(rooms.length+1, undefined, data.data.mode);
     rooms.push(room);
 
-    room.addPlayer(conn, data.data.avatar);
+    room.addPlayer(conn, data.data.avatarId);
 }
 
 /* 2nd Function called */
@@ -75,16 +68,23 @@ function lobbyDetailsCodeHandler(data, rooms, conn)
 function greetCodeHandler(data, rooms,connection)
 {
     var room = getRoomForUserId(data.data.userId,rooms);
-    room.initialize(connection,Constant.NEWPLAYER_CODE);
+    room.requestPlayers(connection,data.data.userId);
 }
 
 
-function dealCardCodeHandler(data,rooms){
+function cardCodeHandler(conn, data,rooms){
 
-    var userId = data.userId;
+   var userId = data.data.userId;
+   var room = getRoomForUserId(userId,rooms);
+   room.requestCards(conn,userId);
+
+}
+
+function moveCodeHandler(data, rooms)
+{
+    var userId = data.data.userId;
     var room = getRoomForUserId(userId,rooms);
-    room.addDealtCardsToPlayer(userId,data.data);
-
+    room.addPlayerMove(userId,data.data.cards);
 }
 
 
@@ -120,6 +120,7 @@ function joinGameHandler(conn, data, rooms){
     rooms.forEach(function(room){
 
         if(room.getRoomId() == joinRoomId){
+            console.log("join room: " + joinRoomId);
             room.addPlayer(conn,joinAvatar);
         }
 
@@ -133,6 +134,13 @@ function fetchRuleHandler(conn, ruleHandler)
     MessageQueue.send(conn,[msg]);
 }
 
+function passTurnCodeHandler(data, rooms)
+{
+    var userId = data.data.userId;
+    var room = getRoomForUserId(userId,rooms);
+    room.passTurnHandler(userId);
+}
+
 Game.prototype.handleMessage = function(connection,dt){
 
     var data = JSON.parse(dt);
@@ -144,20 +152,20 @@ Game.prototype.handleMessage = function(connection,dt){
             greetCodeHandler(data,this._rooms,connection);
             break;
 
-        case Constant.CARD_CODE:
-            cardCodeHandler(data,this._rooms);
+        case Constant.MOVE_CODE:
+            moveCodeHandler(data,this._rooms);
             break;
 
-        case Constant.READY_CODE:
-            readyCodeHandler(data,this._rooms);
+        case Constant.TURN_CODE:
+            turnCodeHandler(connection, data,this._rooms);
             break;
 
         case Constant.LOBBYDETAILS_CODE:
             lobbyDetailsCodeHandler(data,this._rooms,connection);
             break;
 
-        case Constant.DEALCARD_CODE:
-            dealCardCodeHandler(data,this._rooms);
+        case Constant.CARD_CODE:
+            cardCodeHandler(connection, data,this._rooms);
             break;
             
 		case Constant.ENDDISTRIBUTE:
@@ -167,6 +175,10 @@ Game.prototype.handleMessage = function(connection,dt){
         case Constant.ROOMLIST_CODE:
             roomListHandler(connection,this._rooms);
             break;
+
+        case Constant.PASSTURN_CODE:
+            passTurnCodeHandler(data, this._rooms);
+            break;   
 
         case Constant.JOINGAME_CODE:
             joinGameHandler(connection,data,this._rooms);
