@@ -14,8 +14,24 @@ GeneralRule.prototype = new Rule();
 
 GeneralRule.prototype.checkCard = function checkCard(cards)
 {
-    var r = checkSameRank(cards);
-    return r;
+    var sameRank = undefined;
+    var sameSuitAndConsecutive = undefined;
+
+    if(cards.length <= 4)
+    	sameRank = this.checkSameRank(cards);
+
+    if(cards.length >= 3)
+    	sameSuitAndConsecutive = this.checkSameSuitSequence(cards);
+
+
+    if(cards.length >= 3)
+    {
+    	return (sameRank || sameSuitAndConsecutive);
+    }
+    else
+    {
+    	return sameRank;
+    } 
 }
 
 GeneralRule.prototype.checkSameRank = function checkSameRank(cards)
