@@ -89,7 +89,7 @@ describe("GeneralRuleTest",function(){
 
     it("checkSameRank shall return true given an array of cards with same suit and consecutive kind ",function(){
         
-        var randNumOfCards = chance.integer({min:1,max:13});
+        var randNumOfCards = chance.integer({min:3,max:13});
         var randSuit = chance.integer({min:1,max:4});
 
         var cards = [];
@@ -99,10 +99,9 @@ describe("GeneralRuleTest",function(){
             var card = new Card(randSuit, i);
             cards.push(card);
         }
-        
+
         var generalRule = new GeneralRule();
         var ruleSatisfy = generalRule.checkSameSuitSequence(cards);
-
         expect(ruleSatisfy).to.equal(true);
 
     }); 
