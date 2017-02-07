@@ -1,10 +1,12 @@
 
+const GENERALRULE_INDEX = 0;
 
-function PlayerMove(isPass, data)
+function PlayerMove(isPass,userId, data)
 {
     this._isPass = isPass;
     this._data =data;
 }
+
 
 PlayerMove.prototype.isMoveTypePass = function isMoveTypePass()
 {
@@ -26,6 +28,12 @@ PlayerMove.prototype.isMoveStronger = function isMoveStronger(prevPlayerMove)
     });
 
     return allCardsStronger;
+}
+
+PlayerMove.prototype.isMoveEqualLength = function isMoveEqualLength(prevPlayerMove)
+{
+     var prevPlayerCards = prevPlayerMove.getCards();
+     return (this._data.length == prevPlayerCards.length);
 }
 
 module.exports  = PlayerMove;
