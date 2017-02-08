@@ -17,9 +17,10 @@ function Room(seq, rules, mode){
     this._mode = mode;
     this._state = 0;
     
-	this._roomId = randomAlphabet + seq.toString();
+	// this._roomId = randomAlphabet + seq.toString();
+	this._roomId = "R1";
 	this._roundNum = 1;
-	this._maxNumberOfPeople = 4;
+	this._maxNumberOfPeople = 2;
 
 	this._round = new Round(this._rules,this._maxNumberOfPeople-1);
 
@@ -125,11 +126,31 @@ Room.prototype.addBot = function addBot(conn, numOfBots){
     // e.emit('avatar');	
 }
 
-/* ==================================================== */
+/* ============================================================= */
 
-			/* Turn switching feature */
+				/* Turn switching feature */
 
-/* ==================================================== */
+/* ============================================================= */
+
+
+Room.prototype.getFirstTurn = function getFirstTurn(conn, userId)
+{
+	this._state = 4;
+	this.sendState(conn);
+
+	var index =  this._deck.getIndexStartCard();
+	var playerWithTurn = getPlayerForIndex(index, this._players, this._bots);
+
+	playerWithTurn = this._players[0];
+
+	var data = {"userId":playerWithTurn.getUserId(),
+			"photoId":playerWithTurn.getPhotoId()}
+
+	this.sendTo(conn,Constants.TURN_CODE,data);
+}
+
+/* ============= Helper Function for Turn-switching ============= */
+
 
 Room.prototype.switchTurn = function switchTurn(id){
 	
@@ -139,7 +160,7 @@ Room.prototype.switchTurn = function switchTurn(id){
 
 	if(indexCurrPlayer == 0){
 		
-		nextIndex = 2;
+		nextIndex = 1;
 		
 	}else if(indexCurrPlayer == 1){
 		
@@ -161,28 +182,6 @@ Room.prototype.switchTurn = function switchTurn(id){
 	return player;
 }
 
-
-Room.prototype.getFirstTurn = function getFirstTurn(conn, userId)
-{
-	this._state = 4;
-	this.sendState(conn);
-
-	var index =  this._deck.getIndexStartCard();
-	var playerWithTurn = getPlayerForIndex(index, this._players, this._bots);
-
-	playerWithTurn = this._players[0];
-
-	var data = {"userId":playerWithTurn.getUserId(),
-			"photoId":playerWithTurn.getPhotoId()}
-
-	this.sendTo(conn,Constants.TURN_CODE,data);
-}
-
-
-
-
-/* ==================================================== */
-
 Room.prototype.getNextTurn = function getNextTurn(userId)
 {
 	var	playerWithTurn = this.switchTurn(userId);
@@ -191,6 +190,7 @@ Room.prototype.getNextTurn = function getNextTurn(userId)
 	{
 		var data1 = {"userId":playerWithTurn.getUserId()};
 		this.sendTo(playerWithTurn.getConn(),Constants.DELETEDEALT_CODE,data1)
+		console.log("return");
 	}
 
 	var data = {"userId":playerWithTurn.getUserId(),
@@ -200,58 +200,78 @@ Room.prototype.getNextTurn = function getNextTurn(userId)
 	return data;
 }
 
+Room.prototype.helper = function helper(userId, func)
+{
+	var nextTurnData = this.getNextTurn(userId);
+    	
+	// send previous turn data
+
+	var prevTurn = {"prevTurnId":nextTurnData["prevTurnId"]};
+	this.sendToAll(Constants.TURN_CODE,prevTurn);	
+
+	var _this = this;
+
+	setTimeout(function()
+	{
+		func(_this);
+
+	 	// send next player data with turn
+
+ 		setTimeout(function()
+ 		{
+ 			delete nextTurnData["prevTurnId"];
+ 			_this.sendToAll(Constants.TURN_CODE,nextTurnData);
+
+ 		},2700)
+
+	},720)
+}
+
+/* ================= End Helper Function ================ */
+
+
 Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
 {
     var player = this.getPlayerWithId(userId);
 
     player.removeCards();
-    player.addDealtCards(data);
-    
+   	player.addDealtCards(data);
+
     var status = this._round.addMove(false,userId,player.getDealtCards());
 
     if(status)
     {
-    	var nextTurnData = this.getNextTurn(userId);
-    	
-    	// send previous Turn Data
-
-    	var prevTurn = {"prevTurnId":nextTurnData["prevTurnId"]};
-    	this.sendToAll(Constants.TURN_CODE,prevTurn);	
-
-    	var _this = this;
-
-    	setTimeout(function()
+    	this.helper(userId, function(elem)
     	{
-    		// Send Dealt Cards to be rendered
-
     		var data = {"userId":player.getUserId(),"cards":player.getDealtCards()};
-  	 		_this.sendToAll(Constants.MOVE_CODE, data);
-
-  	 		// send player data with turn
-
-  	 		setTimeout(function()
-  	 		{
-  	 			delete nextTurnData["prevTurnId"];
-  	 			_this.sendToAll(Constants.TURN_CODE,nextTurnData);
-  	 		},2700)
-
-    	},720)
+    		elem.sendToAll(Constants.MOVE_CODE, data);
+    	});
     }
     else
     {
   	 	this.sendTo(player.getConn(), Constants.INVALIDMOVE_CODE, {});
-    }
-
-    // 
+    } 
 }
-
 
 Room.prototype.passTurnHandler = function passTurnHandler(userId)
 {
-    var player = this.getPlayerWithId(userId);  
-    var data = {"userId":player.getUserId(),"photoId":player.getPhotoId()};
-    this.sendToAll(Constants.PASSTURN_CODE,data)
+    var player = this.getPlayerWithId(userId); 
+
+    this._round.addMove(true,userId,undefined);
+
+	this.helper(userId, function(elem)
+	{
+		var data = {"userId":player.getUserId(),"photoId":player.getPhotoId()};
+		elem.sendToAll(Constants.PASSTURN_CODE,data)
+	});
 }
+
+
+/* ============================================================= */
+
+				/* End Turn switching feature */
+
+/* ============================================================= */
 
 
 Room.prototype.addPlayer = function addPlayer(connection, avatarId){
