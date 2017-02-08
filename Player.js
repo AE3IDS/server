@@ -38,13 +38,19 @@ Player.prototype.addDealtCards = function addDealtCards(data){
         var n = new Card(item["_suit"],item["_rank"]);
         dealtCards.push(n);       
     })
-
 }
 
 Player.prototype.getDealtCards = function getDealtCards(){
 
     return this._dealtCards;
 }
+
+Player.prototype.removeCards = function removeCards(){
+
+    this._dealtCards.length = 0;
+}
+
+
 
 Player.prototype.addCard = function addCard(card){
     this._cards = card
