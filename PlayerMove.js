@@ -8,6 +8,22 @@ function PlayerMove(isPass,userId, data)
     this._data =data;
 }
 
+PlayerMove.prototype.check = function check(rules, prevPlayerMove)
+{
+    var isGeneralRuleSatisfy = rules[GENERALRULE_INDEX].checkCard(this._data);
+    var isValid = true;
+
+    if(prevPlayerMove != undefined)
+    {
+        isValid = this.isMoveEqualLength(prevPlayerMove);
+        if(isValid)
+            isValid = this.isMoveStronger(prevPlayerMove);
+    }
+
+    var allRuleSatisfied = (isGeneralRuleSatisfy && isValid);
+    return allRuleSatisfied;
+}
+
 PlayerMove.prototype.getUserId = function getUserId()
 {
     return this._userId;
