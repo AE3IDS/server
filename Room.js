@@ -157,7 +157,7 @@ Room.prototype.switchTurn = function switchTurn(id){
 
 
 	var player = getPlayerForIndex(nextIndex,this._players,this._bots);
-
+	
 	return player;
 }
 
@@ -211,8 +211,31 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
 
     if(status)
     {
-    	var data = {"userId":player.getUserId(),"cards":player.getDealtCards()};
-  	 	this.sendToAll(Constants.MOVE_CODE, data);
+    	var nextTurnData = this.getNextTurn(userId);
+    	
+    	// send previous Turn Data
+
+    	var prevTurn = {"prevTurnId":nextTurnData["prevTurnId"]};
+    	this.sendToAll(Constants.TURN_CODE,prevTurn);	
+
+    	var _this = this;
+
+    	setTimeout(function()
+    	{
+    		// Send Dealt Cards to be rendered
+
+    		var data = {"userId":player.getUserId(),"cards":player.getDealtCards()};
+  	 		_this.sendToAll(Constants.MOVE_CODE, data);
+
+  	 		// send player data with turn
+
+  	 		setTimeout(function()
+  	 		{
+  	 			delete nextTurnData["prevTurnId"];
+  	 			_this.sendToAll(Constants.TURN_CODE,nextTurnData);
+  	 		},2700)
+
+    	},720)
     }
     else
     {
