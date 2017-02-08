@@ -63,4 +63,15 @@ Round.prototype.hasPassedMax = function hasPassedMax()
 }
 
 
+Round.prototype.checkIfReturn = function checkIfReturn(userId)
+{
+    var index = this._moves.length - this._passNumMax - 1;
+    
+    if(index >= 0)
+        return (this._moves[index].getUserId() == userId);
+    else
+        return false;
+}
+
+
 module.exports = Round;
