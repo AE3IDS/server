@@ -131,17 +131,6 @@ Room.prototype.addBot = function addBot(conn, numOfBots){
 
 /* ==================================================== */
 
-
-Room.prototype.firstDealtTurn = function firstDealtTurn (){
-
-    var index =  this._deck.getIndexStartCard();
- 	var player = getPlayerForIndex(index, this._players, this._bots);
-
-     player = this._players[0]; 
-
-     return player;       
-}
-
 Room.prototype.switchTurn = function switchTurn(id){
 	
 	var indexCurrPlayer = getIndexForId(id,this._players);
@@ -173,39 +162,43 @@ Room.prototype.switchTurn = function switchTurn(id){
 }
 
 
-Room.prototype.getTurn = function getTurn(conn, userId)
+Room.prototype.getFirstTurn = function getFirstTurn(conn, userId)
 {
-	var playerWithTurn = undefined;
-	var data = undefined;
-	var player = this.getPlayerWithId(userId);
+	this._state = 4;
+	this.sendState(conn);
 
+	var index =  this._deck.getIndexStartCard();
+	var playerWithTurn = getPlayerForIndex(index, this._players, this._bots);
 
-	if(!player.getFirstDealt())
-	{
-		this._state = 4;
-		playerWithTurn = this.firstDealtTurn();
+	playerWithTurn = this._players[0];
 
-		data = {"userId":playerWithTurn.getUserId(),
-    			"photoId":playerWithTurn.getPhotoId()}
+	var data = {"userId":playerWithTurn.getUserId(),
+			"photoId":playerWithTurn.getPhotoId()}
 
-    	player.setFirstDealt(true);
-		this.sendState(conn);
-		this.sendTo(conn,Constants.TURN_CODE,data);
-	}
-	else
-	{
-		playerWithTurn = this.switchTurn(userId);
-		data = {"userId":playerWithTurn.getUserId(),
-    			"photoId":playerWithTurn.getPhotoId(),
-    			"prevTurnId":userId}
-
-    	this.sendToAll(Constants.TURN_CODE,data);		
-	}
+	this.sendTo(conn,Constants.TURN_CODE,data);
 }
+
+
 
 
 /* ==================================================== */
 
+Room.prototype.getNextTurn = function getNextTurn(userId)
+{
+	var	playerWithTurn = this.switchTurn(userId);
+
+	if(this._round.checkIfReturn(playerWithTurn.getUserId()))
+	{
+		var data1 = {"userId":playerWithTurn.getUserId()};
+		this.sendTo(playerWithTurn.getConn(),Constants.DELETEDEALT_CODE,data1)
+	}
+
+	var data = {"userId":playerWithTurn.getUserId(),
+			"photoId":playerWithTurn.getPhotoId(),
+			"prevTurnId":userId}
+
+	return data;
+}
 
 Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
 {
