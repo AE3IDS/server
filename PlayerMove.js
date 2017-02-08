@@ -4,7 +4,13 @@ const GENERALRULE_INDEX = 0;
 function PlayerMove(isPass,userId, data)
 {
     this._isPass = isPass;
+    this._userId = userId;
     this._data =data;
+}
+
+PlayerMove.prototype.getUserId = function getUserId()
+{
+    return this._userId;
 }
 
 
