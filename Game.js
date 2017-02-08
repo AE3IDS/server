@@ -47,7 +47,7 @@ exports.Game = function(){
 function turnCodeHandler(conn, data,rooms){
     
     var room = getRoomForUserId(data.data.userId,rooms);
-    room.getTurn(conn, data.data.userId);
+    room.getFirstTurn(conn, data.data.userId);
 
 }
 
