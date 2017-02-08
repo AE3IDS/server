@@ -53,11 +53,11 @@ function turnCodeHandler(conn, data,rooms){
 
 /* 1st Function Called */
 
-function lobbyDetailsCodeHandler(data, rooms, conn)
+function lobbyDetailsCodeHandler(data, rooms, conn, rules)
 {    
-    //var rules = this._rulesHandler.getRules(data.data.rules);
+    var rules1 = rules.getRules([]);
     
-    var room = new Room(rooms.length+1, undefined, data.data.mode);
+    var room = new Room(rooms.length+1, rules1, data.data.mode);
     rooms.push(room);
 
     room.addPlayer(conn, data.data.avatarId);
@@ -161,7 +161,7 @@ Game.prototype.handleMessage = function(connection,dt){
             break;
 
         case Constant.LOBBYDETAILS_CODE:
-            lobbyDetailsCodeHandler(data,this._rooms,connection);
+            lobbyDetailsCodeHandler(data,this._rooms,connection, this._rulesHandler);
             break;
 
         case Constant.CARD_CODE:
