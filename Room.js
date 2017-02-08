@@ -7,6 +7,7 @@ var Constants = require('./Constants');
 var Deck = require('./Deck');
 var Message = require('./Message');
 var MessageQueue = require('./MessageQueue');
+var Round = require('./Round');
 
 function Room(seq, rules, mode){
 
@@ -19,6 +20,9 @@ function Room(seq, rules, mode){
 	this._roomId = randomAlphabet + seq.toString();
 	this._roundNum = 1;
 	this._maxNumberOfPeople = 4;
+
+	this._round = new Round(this._rules,this._maxNumberOfPeople-1);
+
 	this._players = [];
     this._bots = [];
     this._playerReady = 0;
@@ -76,7 +80,7 @@ Room.prototype.requestPlayers = function requestPlayers(connection,userId){
         this.sendState(connection);
         this.addBot(connection, 3);          
     }
-    else if(this._mode == 2)
+    else if(this._mode == "1")
     {
     	this.multiplayer(connection);    
     }
@@ -206,10 +210,23 @@ Room.prototype.getTurn = function getTurn(conn, userId)
 Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
 {
     var player = this.getPlayerWithId(userId);
-    player.addDealtCards(data);
 
-    var data = {"userId":player.getUserId(),"cards":player.getDealtCards()};
-    this.sendToAll(Constants.MOVE_CODE, data);
+    player.removeCards();
+    player.addDealtCards(data);
+    
+    var status = this._round.addMove(false,userId,player.getDealtCards());
+
+    if(status)
+    {
+    	var data = {"userId":player.getUserId(),"cards":player.getDealtCards()};
+  	 	this.sendToAll(Constants.MOVE_CODE, data);
+    }
+    else
+    {
+  	 	this.sendTo(player.getConn(), Constants.INVALIDMOVE_CODE, {});
+    }
+
+    // 
 }
 
 
