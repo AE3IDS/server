@@ -26,8 +26,8 @@ describe("PlayerMoveTest",function(){
             strongCards.push(strongCard);
         }
 
-        var weakCardsMove = new PlayerMove(false,weakCards);
-        var strongCardsMove = new PlayerMove(false,strongCards);
+        var weakCardsMove = new PlayerMove(false,"asdfs",weakCards);
+        var strongCardsMove = new PlayerMove(false,"asdfs",strongCards);
 
         var isStronger = strongCardsMove.isMoveStronger(weakCardsMove);
 
@@ -56,8 +56,8 @@ describe("PlayerMoveTest",function(){
             strongCards.push(strongCard);
         }
 
-        var strongCardsMove = new PlayerMove(false,strongCards);
-        var weakCardsMove = new PlayerMove(false,weakCards);
+        var strongCardsMove = new PlayerMove(false,"asdfs",strongCards);
+        var weakCardsMove = new PlayerMove(false,"asdfs",weakCards);
 
         var isStronger = weakCardsMove.isMoveStronger(strongCardsMove);
 
