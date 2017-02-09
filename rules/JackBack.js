@@ -15,11 +15,12 @@ JackBack.prototype = new Rule();
 
 JackBack.prototype.checkCard = function checkCard(cards){
 
-	var c = cards.filter(function(item){
-		return (item.getKind() == JACKCARD_NUMBER);
-	})
+	var isJack = true;
 
-	return (c.length != 0);
+	for(var counter = 0; (counter < cards.length && isJack);counter++)
+		isJack = (cards[counter].getKind() == JACKCARD_NUMBER);
+
+	return isJack;
 }
 
 module.exports = JackBack;
