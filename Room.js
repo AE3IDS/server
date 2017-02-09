@@ -213,16 +213,22 @@ Room.prototype.helper = function helper(userId, func)
 
 	setTimeout(function()
 	{
-		func(_this);
+		var nextTurnHandler = function(data, time){
 
-	 	// send next player data with turn
+			var timeoutSendTime = (time == undefined)?2700:time;
 
- 		setTimeout(function()
- 		{
- 			delete nextTurnData["prevTurnId"];
- 			_this.sendToAll(Constants.TURN_CODE,nextTurnData);
+			var sendFunction = function(){
 
- 		},2700)
+ 				delete data["prevTurnId"];
+ 				_this.sendToAll(Constants.TURN_CODE,data);
+
+ 			}
+
+			setTimeout(sendFunction,timeoutSendTime);
+		}
+
+
+		func(_this, nextTurnData, nextTurnHandler);
 
 	},720)
 }
@@ -241,10 +247,13 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
 
     if(status)
     {
-    	this.helper(userId, function(elem)
+    	this.helper(userId, function(elem, nextTurndata, func)
     	{
-    		var data = {"userId":player.getUserId(),"cards":player.getDealtCards()};
+    		var data = {"userId":player.getUserId(),
+    					"cards":player.getDealtCards()};
+
     		elem.sendToAll(Constants.MOVE_CODE, data);
+    		func(nextTurndata);
     	});
     }
     else
@@ -259,11 +268,41 @@ Room.prototype.passTurnHandler = function passTurnHandler(userId)
 
     this._round.addMove(true,userId,undefined);
 
-	this.helper(userId, function(elem)
-	{
-		var data = {"userId":player.getUserId(),"photoId":player.getPhotoId()};
-		elem.sendToAll(Constants.PASSTURN_CODE,data)
-	});
+    var func = undefined;
+
+    if(this._round.hasPassedMax())
+    {
+    	func = function(elem, nextTurnData, func)
+    	{
+    		var data = {"userId":nextTurnData["userId"],
+    					"photoId":nextTurnData["photoId"]};
+
+    		elem.sendToAll(Constants.ROUNDWIN_CODE,data)
+
+
+    		var sendNewRound = function(){
+    			elem.sendToAll(Constants.NEWROUND_CODE,{});
+    		}
+
+    		elem._round.reset();
+    		setTimeout(sendNewRound,2500);
+    		func(nextTurnData, 5200);
+    	}
+    }
+    else
+    {
+    	func = function(elem, nextTurnData, func)
+    	{
+    		var data = {"userId":player.getUserId(),
+    					"photoId":player.getPhotoId()};
+
+			elem.sendToAll(Constants.PASSTURN_CODE,data);
+
+			func(nextTurnData);
+    	}
+    }
+
+	this.helper(userId, func);
 }
 
 
