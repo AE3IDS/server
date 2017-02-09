@@ -8,7 +8,7 @@ describe("GeneralRuleTest",function(){
     
     it("checkSameRank shall return true given an array of cards all with the same Kind/Rank",function(){
         
-        var randNumOfCards = chance.integer({min:1,max:13});
+        var randNumOfCards = chance.integer({min:2,max:13});
 
         var cards = [];
 
@@ -28,7 +28,7 @@ describe("GeneralRuleTest",function(){
 
     it("checkSameRank shall return false given an array of cards all with the different Kind/Rank",function(){
         
-        var randNumOfCards = chance.integer({min:1,max:13});
+        var randNumOfCards = chance.integer({min:2,max:13});
 
         var cards = [];
 
@@ -46,7 +46,7 @@ describe("GeneralRuleTest",function(){
     });
 
 
-     it("checkSameRank shall return false given an array of cards with same suit but non-consecutive kind ",function(){
+     it("checkSameSuitSequence shall return false given an array of cards with same suit but non-consecutive kind ",function(){
         
         var randNumOfCards = chance.integer({min:0,max:2});
 
@@ -58,7 +58,7 @@ describe("GeneralRuleTest",function(){
             cards.push(card);
         }
 
-        console.log(cards.length);
+        // console.log(cards.length);
 
         var generalRule = new GeneralRule();
         var ruleSatisfy = generalRule.checkSameSuitSequence(cards);
@@ -67,7 +67,7 @@ describe("GeneralRuleTest",function(){
 
     });
 
-    it("checkSameRank shall return false given an array of cards with different suit but consecutive kind ",function(){
+    it("checkSameSuitSequence shall return false given an array of cards with different suit but consecutive kind ",function(){
         
         var randNumOfCards = chance.integer({min:1,max:13});
 
@@ -87,7 +87,7 @@ describe("GeneralRuleTest",function(){
 
     }); 
 
-    it("checkSameRank shall return true given an array of cards with same suit and consecutive kind ",function(){
+    it("checkSameSuitSequence shall return true given an array of cards with same suit and consecutive kind ",function(){
         
         var randNumOfCards = chance.integer({min:3,max:13});
         var randSuit = chance.integer({min:1,max:4});
