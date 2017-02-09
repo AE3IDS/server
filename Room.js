@@ -243,7 +243,8 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
     player.removeCards();
    	player.addDealtCards(data);
 
-    var status = this._round.addMove(false,userId,player.getDealtCards());
+   	this._round.initializeMove(false,userId,player.getDealtCards())
+    var status = this._round.addMove();
 
     if(status)
     {
@@ -266,7 +267,8 @@ Room.prototype.passTurnHandler = function passTurnHandler(userId)
 {
     var player = this.getPlayerWithId(userId); 
 
-    this._round.addMove(true,userId,undefined);
+    this._round.initializeMove(true, userId, undefined);
+    this._round.addMove();
 
     var func = undefined;
 
