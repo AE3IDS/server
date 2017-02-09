@@ -14,7 +14,12 @@ function EightEndersRule(){
 EightEndersRule.prototype = new Rule();
 
 EightEndersRule.prototype.checkCard = function checkCard(cards){
-    return (cards.indexOf(EIGHT_NUMBER) == -1);
+
+	var c = cards.filter(function(item){
+		return (item.getKind() == EIGHT_NUMBER);
+	})
+
+	return (c.length != 0);
 }
 
 module.exports = EightEndersRule;
