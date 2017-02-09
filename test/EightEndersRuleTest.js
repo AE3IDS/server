@@ -3,6 +3,7 @@ var expect = chai.expect;
 var EightRule = require('../rules/EightEndersRule');
 var chance = require('chance').Chance();
 var Player = require('../Player');
+var Card = require('../Card');
 
 describe("EightEndersRuleTest",function(){
     
@@ -20,24 +21,44 @@ describe("EightEndersRuleTest",function(){
         expect(name).to.equal(true);
     });
     
-    it("checkCard shall return true if the array consists of more than one 8's",function(){
+    it("checkCard shall return true, if the array consists of one or more cards whose rank is an 8",function(){
     
         var eRule = new EightRule();
-        var randomNumbers = [];
+        var randNumOfCards = chance.integer({min:1,max:13});
 
-        for(var i =0;i < 13;i++){
-            var randomCardKind = Math.floor(Math.random() * (16-3+1)) +3;
-            randomNumbers.push(randomCardKind);
+        var cards = [];
+
+        for(var i =0;i < randNumOfCards;i++){
+
+             var randSuit = chance.integer({min:1,max:4});
+             var card = new Card(randSuit, 8);
+             cards.push(card);
+
         }
         
-        var randomIndex =  Math.floor(Math.random() * (randomNumbers.length-0+1))+0;
-        randomNumbers[randomIndex] = 8;
-            
-        var hasNoEight = eRule.checkCard(randomNumbers) 
+        var hasEight = eRule.checkCard(cards);
+        expect(hasEight).to.equal(true);
+
+    });
+
+    it("checkCard shall return false, if given array of cards has no 8 cards",function(){
+    
+        var eRule = new EightRule();
+        var randNumOfCards = chance.integer({min:1,max:13});
+
+        var cards = [];
+
+        for(var i =0;i < randNumOfCards;i++){
+
+             var randSuit = chance.integer({min:1,max:4});
+             var randSuit = chance.integer({min:3,max:7});
+             var card = new Card(randSuit, randSuit);
+             cards.push(card);
+
+        }
         
-
+        var hasNoEight = eRule.checkCard(cards);
         expect(hasNoEight).to.equal(false);
-
 
     });
 
