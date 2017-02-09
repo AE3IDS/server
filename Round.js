@@ -63,6 +63,13 @@ Round.prototype.hasPassedMax = function hasPassedMax()
 }
 
 
+Round.prototype.getWinningId = function getWinningId()
+{
+    var index = this._moves.length - this._passNumMax - 1;
+    return this._moves[index].getUserId();
+}
+
+
 Round.prototype.checkIfReturn = function checkIfReturn(userId)
 {
     var index = this._moves.length - this._passNumMax - 1;
@@ -71,6 +78,12 @@ Round.prototype.checkIfReturn = function checkIfReturn(userId)
         return (this._moves[index].getUserId() == userId);
     else
         return false;
+}
+
+Round.prototype.reset = function reset()
+{
+    this._moves.length = 0;
+    this._numOfPass = 0;
 }
 
 
