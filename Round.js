@@ -7,13 +7,21 @@ function Round(rules, n){
 	this._rules = rules;
 	this._moves = [];
 	this._passNumMax = n
+    this._tempMove = [];
 }
 
-Round.prototype.addMove = function addMove(isPass, userId, cards)
+Round.prototype.initializeMove = function initializeMove(isPass, userId, cards)
+{
+    var currMove = new PlayerMove(isPass,userId,cards);
+    this._tempMove.push(currMove);
+}
+
+
+Round.prototype.addMove = function addMove()
 {
     // convert q to a set of moves
 
-    var currMove = new PlayerMove(isPass,userId,cards);
+    var currMove = this._tempMove.pop();
     var isMoveValid = undefined; //check if zero 
     var output = undefined;
     
@@ -39,10 +47,10 @@ Round.prototype.addMove = function addMove(isPass, userId, cards)
         }                               // if q is pass and s is not pass
     }
 
-    if(isPass == false && isMoveValid == undefined)
+    if(currMove.isMoveTypePass() == false && isMoveValid == undefined)
         isMoveValid = currMove.check(this._rules);
 
-    if(isMoveValid || isPass == true)
+    if(isMoveValid || currMove.isMoveTypePass() == true)
     {
         this._moves.push(currMove);
         output = true;
