@@ -18,7 +18,7 @@ PlayerMove.prototype.check = function check(rules, prevPlayerMove)
     {
         isValid = this.isMoveEqualLength(prevPlayerMove);
         if(isValid)
-            isValid = this.isMoveStronger(prevPlayerMove);
+            isValid = this.isMoveStronger(false, prevPlayerMove);
     }
 
     var allRuleSatisfied = (isGeneralRuleSatisfy && isValid);
@@ -65,17 +65,21 @@ PlayerMove.prototype.getCards = function getCards()
     return this._data;
 }
 
-PlayerMove.prototype.isMoveStronger = function isMoveStronger(prevPlayerMove)
+PlayerMove.prototype.isMoveStronger = function isMoveStronger(reverse, prevPlayerMove)
 {
     var prevPlayerCards = prevPlayerMove.getCards();
     var allCardsStronger = true;
 
     (this._data).forEach(function(item,index){
-        allCardsStronger = item.isCardStronger(prevPlayerCards[index]);
+
+        var t = item.isCardStronger(prevPlayerCards[index]);
+        allCardsStronger = ( reverse ? !t : t );
+
     });
 
     return allCardsStronger;
 }
+
 
 PlayerMove.prototype.isMoveEqualLength = function isMoveEqualLength(prevPlayerMove)
 {
