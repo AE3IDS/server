@@ -46,7 +46,7 @@ PlayerMove.prototype.checkExtraRules = function checkExtraRules(rules)
 
     })
 
-    return rulesName;
+    return {"item":this,"rules":rulesName};
 }
 
 PlayerMove.prototype.getUserId = function getUserId()
