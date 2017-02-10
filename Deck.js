@@ -10,23 +10,17 @@ function Deck(){
     
     this._cards = [];
 
-    for(var i = 1; i < 5;i++){
-    
-        var card = [];
-        for(var j = 3; j < 16;j++){
-            card.push(new Card(i,j));
-        }
-        this._cards.push(card);
-
+    for(var i = 1; i < 5;i++)
+    {
+        for(var j = 3; j < 16;j++)
+            this._cards.push(new Card(i,j));
     }
 
     // Add 2 jokers
 
-    for(var i = 0; i < 2;i++)
-    {
-        var randIndex = Chance.natural({min:0,max:MAX-1});
-        this._cards[randIndex].push(new Card(0,0));
-    }
+    this._cards.push(new Card(0,0));
+    this._cards.push(new Card(0,0));
+
     
 }
 
@@ -39,42 +33,39 @@ function stillHasCards(cards){
 
 Deck.prototype.shuffle = function shuffle(){
 
-    var cards = this._cards;
-    var shuffled = [];
+    var maxNum = TOTALNUM_OF_CARD;
+    var shuffled = [[]];
+    var drawnIndex = [];
+    var divideProportion = [14,14,13,13];
+    var divideIndex = 0;
+    var val = divideProportion[divideIndex];
     var temp = [];
 
-    var totalNum = cards.map(function(item){ return item.length; });
-    var counter = 0;
 
-    for(var i = 0;i < 53;i++){
-        
-        if((i % totalNum[counter]) == 0){
-            if(temp.length > 0){
-                shuffled.push(temp);
-                temp = [];
-                counter++;
-            }
+    while(maxNum > -1)
+    {
+        if(TOTALNUM_OF_CARD - val == maxNum)
+        {
+            shuffled.push([]);
+            divideIndex++;
+            val += divideProportion[divideIndex];
+
+            if(maxNum == 0)
+                break;
         }
 
-        if(i < 52){
+        var randCardIndex = Chance.natural({min:0,max:TOTALNUM_OF_CARD-1});
 
-            var suit = undefined;
-    
-            while(stillHasCards(cards)){
-                suit = Chance.natural({min:0,max:cards.length-1});
-                if(cards[suit].length != 0){
-                    break;
-                }
-            }
-        
-            var kind = Chance.natural({min:0,max:cards[suit].length-1});
-            var deleted = cards[suit].splice(kind,1);   
-              
-            temp.push(deleted[0])
+        if(drawnIndex.indexOf(randCardIndex) == -1)
+        {
+            shuffled[divideIndex].push(this._cards[randCardIndex]);
+            drawnIndex.push(randCardIndex);
+            maxNum--; 
         }
-        
+
     }
 
+    shuffled.pop();
     this._cards = shuffled;
     //shuffled.forEach(function(item){ console.log(item.length) })
 }
