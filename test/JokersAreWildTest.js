@@ -95,7 +95,7 @@ describe("JokersAreWildTest",function(){
         joker.checkCard(cards);
 
         var jokers = cards.filter(function(item){
-            return (item.getKind() == 1 && item.getSuit() == 0);
+            return (item.getKind() == 1);
         })
 
         expect(jokers.length == 0).to.equal(true);
