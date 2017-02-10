@@ -243,18 +243,42 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
     player.removeCards();
    	player.addDealtCards(data);
 
-   	this._round.initializeMove(false,userId,player.getDealtCards())
-    var status = this._round.addMove();
+    var status = this._round.addMove(false,userId,player.getDealtCards());
+    var extraRules = this._round.checkMoveExtra();
+    console.log(extraRules);
 
     if(status)
     {
     	this.helper(userId, function(elem, nextTurndata, func)
     	{
+    		/* Send the cards of the move */
+
     		var data = {"userId":player.getUserId(),
     					"cards":player.getDealtCards()};
 
     		elem.sendToAll(Constants.MOVE_CODE, data);
-    		func(nextTurndata);
+
+
+    		/* Send extra rules that apply */
+
+    		var sendNextTurnTime = undefined;
+
+    		if(extraRules)
+    		{
+    			setTimeout(function(){
+
+    				elem.sendToAll(Constants.RULES_LIST, extraRules)
+
+    			},2500);
+
+    			sendNextTurnTime = 5200;
+    		}
+
+
+    		/*Execute function func */
+
+    		func(nextTurndata, sendNextTurnTime);
+
     	});
     }
     else
@@ -267,8 +291,7 @@ Room.prototype.passTurnHandler = function passTurnHandler(userId)
 {
     var player = this.getPlayerWithId(userId); 
 
-    this._round.initializeMove(true, userId, undefined);
-    this._round.addMove();
+    this._round.addMove(true,userId,undefined);
 
     var func = undefined;
 
