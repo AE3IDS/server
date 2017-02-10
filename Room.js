@@ -303,14 +303,8 @@ Room.prototype.passTurnHandler = function passTurnHandler(userId)
     					"photoId":nextTurnData["photoId"]};
 
     		elem.sendToAll(Constants.ROUNDWIN_CODE,data)
+    		elem.sendNewRound(2500);
 
-
-    		var sendNewRound = function(){
-    			elem.sendToAll(Constants.NEWROUND_CODE,{});
-    		}
-
-    		elem._round.reset();
-    		setTimeout(sendNewRound,2500);
     		func(nextTurnData, 5200);
     	}
     }
@@ -393,6 +387,17 @@ Room.prototype.requestCards = function requestCards(){
 				/* Private methods */
 
 /* ==================================================== */
+
+Room.prototype.sendNewRound = function sendNewRound(time)
+{
+	var _this = this;
+
+	setTimeout(function(){
+		_this.sendToAll(Constants.NEWROUND_CODE,{});
+   		_this._round.reset();
+	},time)
+
+}
 
 
 Room.prototype.getPlayerWithId = function getPlayerWithId(userId)
