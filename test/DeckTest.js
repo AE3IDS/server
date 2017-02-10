@@ -5,43 +5,11 @@ var Card = require('../Card');
 
 describe('DeckTest',function(){
 
-    it("constructor should have 4 valid suits",function(){
-
-        var deck = new Deck();
-        var deckTest = [];
-        var allDeckPresent = true;
-
-        deck._cards.forEach(function(item){
-            deckTest.push(item[0].getSuit());
-        });
-
-        deckTest.forEach(function(item,index){
-            allDeckPresent = (deckTest[index] == index+1);
-        });
-
-        expect(allDeckPresent && deckTest.length == 4).to.equal(true);
-    })
-
-    it("constructor should have all 53 cards",function(){
+    it("constructor should have all 54 cards",function(){
     
         var deck = new Deck();
         var cards = deck.getCards();
-        var numOfCards = 0;
-        var allCardKindPresent = true;
-
-        cards.forEach(function(item){
-            numOfCards += item.length;
-            var cardKindNumber = 3;
-            item.forEach(function(cardItem){
-                allCardKindPresent = (cardItem.getKind() == cardKindNumber);
-                cardKindNumber += 1;
-            })
-        });
-        
-        expect(numOfCards == 52 && allCardKindPresent).to.equal(true);
-
-
-
+        expect(cards.length == 54).to.equal(true);
     })
 
     it("shuffle should return the same number of cards", function(){
@@ -50,22 +18,16 @@ describe('DeckTest',function(){
         var totalNumOfCards = 0;
         var cards = deck.getCards();
 
-        for(var i = 0;i < cards.length;i++){
-            totalNumOfCards += cards[i].length;
-        }
-
         deck.shuffle();
-        cards = deck.getCards();
+        var cards1 = deck.getCards();
 
         var totalShuffled = 0;
 
-        for(var i = 0;i < cards.length;i++){
-            totalShuffled += cards[i].length;
+        for(var i = 0;i < cards1.length;i++){
+            totalShuffled += cards1[i].length;
         }    
- 
-        
 
-         expect(totalNumOfCards == totalShuffled).to.equal(true);
+         expect(cards.length == totalShuffled).to.equal(true);
 
     });
 
@@ -100,6 +62,7 @@ describe('DeckTest',function(){
         var ClubSuit = [];
         var DiamonSuit = [];
         var SpadesSuit = [];
+        var jokers = [];
 
         shuffledCards.forEach(function(item){
             item.forEach(function(i){
@@ -111,20 +74,18 @@ describe('DeckTest',function(){
                     DiamonSuit.push(i);
                 }else if(i.getSuit() == 4){
                     SpadesSuit.push(i);
+                }else{
+                    jokers.push(i);
                 }
             });        
            
         });
 
-        var Hearthas13 = HeartSuit.length == 13;
-        var Clubhas13 = ClubSuit.length == 13;
-        var Diamonhas13 = DiamonSuit.length == 13;
-        var Spadeshas13 = SpadesSuit.length == 13;
-        
-        var output = Hearthas13 && Clubhas13 && Diamonhas13 && Spadeshas13;
+        var sum = HeartSuit.length + ClubSuit.length + DiamonSuit.length + SpadesSuit.length + jokers.length;
 
-        expect(output).to.equal(true); 
+        expect(sum == 54).to.equal(true); 
     })
+
     it("getIndexStartCard shall return the index of the array with Diamond 3 card",function(){
         
         var deck = new Deck();
