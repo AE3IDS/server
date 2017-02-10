@@ -1,6 +1,11 @@
 var Card = require('./Card');
 var Chance = require('chance').Chance();
 
+
+const TOTALNUM_OF_CARD = 54;
+const MAX = 4;
+
+
 function Deck(){
     
     this._cards = [];
@@ -17,8 +22,11 @@ function Deck(){
 
     // Add 2 jokers
 
-    this._cards.push(new Card(0,0));
-    this._cards.push(new Card(0,0));
+    for(var i = 0; i < 2;i++)
+    {
+        var randIndex = Chance.natural({min:0,max:MAX});
+        this._cards[randIndex].push(new Card(0,0));
+    }
     
 }
 
@@ -30,7 +38,7 @@ function stillHasCards(cards){
 }
 
 Deck.prototype.shuffle = function shuffle(){
-    
+
     var cards = this._cards;
     var shuffled = [];
     var temp = [];
@@ -38,7 +46,6 @@ Deck.prototype.shuffle = function shuffle(){
     var totalNum = cards.map(function(item){ return item.length; });
     var counter = 0;
 
-    
     for(var i = 0;i < 53;i++){
         
         if((i % totalNum[counter]) == 0){
