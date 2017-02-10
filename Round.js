@@ -6,7 +6,8 @@ function Round(rules, n){
 	this._numOfPass = 0;
 	this._rules = rules;
 	this._moves = [];
-	this._passNumMax = n
+	this._passNumMax = n;
+    this._movesWithExtraRules = [];
 }
 
 
@@ -57,6 +58,22 @@ Round.prototype.addMove = function addMove(isPass, userId, cards)
     // console.log(this._moves.length);
 
     return output;
+}
+
+Round.prototype.checkMoveExtra = function checkMoveExtra(cards)
+{
+    var currMove = this._moves[this._moves.length-1];
+    var rules = currMove.checkExtraRules(this._rules);
+
+    if(rules["rules"].length == 0)
+    {
+        return undefined;
+    }
+    else
+    {
+        this._movesWithExtraRules.push(rules["item"]);
+        return rules["rules"];
+    }
 }
 
 Round.prototype.hasPassedMax = function hasPassedMax()
