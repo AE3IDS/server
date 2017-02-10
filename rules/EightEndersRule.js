@@ -15,11 +15,12 @@ EightEndersRule.prototype = new Rule();
 
 EightEndersRule.prototype.checkCard = function checkCard(cards){
 
-	var c = cards.filter(function(item){
-		return (item.getKind() == EIGHT_NUMBER);
-	})
+	var allEight = true;
 
-	return (c.length != 0);
+	for(var i = 0;i <cards.length; i++)
+		allEight = (cards[i].getKind() == EIGHT_NUMBER);
+
+	return allEight
 }
 
 module.exports = EightEndersRule;
