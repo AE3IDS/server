@@ -14,6 +14,11 @@ function Deck(){
         this._cards.push(card);
 
     }
+
+    // Add 2 jokers
+
+    this._cards.push(new Card(0,0));
+    this._cards.push(new Card(0,0));
     
 }
 
