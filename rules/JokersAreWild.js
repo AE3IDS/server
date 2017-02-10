@@ -47,7 +47,7 @@ JokersAreWild.prototype.checkCard = function checkCard(cards)
 
 			jokers.forEach(function(item){
 				var jokerIndex = cards.indexOf(item);
-				cards[jokerIndex] = new Card(firstCard.getSuit(),firstCard.getKind());
+				cards[jokerIndex] = new Card(JOKER_SUIT,firstCard.getKind());
 			})
 
 			isRuleApplicable = true;
