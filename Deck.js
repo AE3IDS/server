@@ -24,7 +24,7 @@ function Deck(){
 
     for(var i = 0; i < 2;i++)
     {
-        var randIndex = Chance.natural({min:0,max:MAX});
+        var randIndex = Chance.natural({min:0,max:MAX-1});
         this._cards[randIndex].push(new Card(0,0));
     }
     
