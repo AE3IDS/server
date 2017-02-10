@@ -6,6 +6,7 @@ function PlayerMove(isPass,userId, data)
     this._isPass = isPass;
     this._userId = userId;
     this._data =data;
+    this._extraRules = [];
 }
 
 PlayerMove.prototype.check = function check(rules, prevPlayerMove)
@@ -22,6 +23,30 @@ PlayerMove.prototype.check = function check(rules, prevPlayerMove)
 
     var allRuleSatisfied = (isGeneralRuleSatisfy && isValid);
     return allRuleSatisfied;
+}
+
+
+PlayerMove.prototype.checkExtraRules = function checkExtraRules(rules)
+{
+    var startIndex = GENERALRULE_INDEX + 1;
+    var splitRules = rules.slice(startIndex);
+
+    var _this = this;
+
+    var applicableRules = splitRules.filter(function(rule){
+        return (rule.checkCard(_this._data) == true);
+    })
+
+    var rulesName = [];
+
+    applicableRules.forEach(function(item){
+
+        _this._extraRules.push(item.getId());
+        rulesName.push(item.getRuleName());
+
+    })
+
+    return rulesName;
 }
 
 PlayerMove.prototype.getUserId = function getUserId()
