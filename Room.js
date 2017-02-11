@@ -10,6 +10,11 @@ var MessageQueue = require('./MessageQueue');
 var Round = require('./Round');
 var BotSpawner = require('./BotSpawner');
 
+
+const BOT_MODE = "0";
+const PLAYER_MODE = "1";
+
+
 function Room(seq, rules, mode){
 
 	var randomAlphabet = Chance.character({pool:'ABCDEFGHIJKLMNOPQRSTUVWYZ'});
@@ -86,7 +91,7 @@ Room.prototype.requestPlayers = function requestPlayers(connection,userId){
 
 	// Singleplayer mode
 	
-    if(this._mode == "0")
+    if(this._mode == BOT_MODE)
     {    
         if(!this._hasSpawnBots)
         {
@@ -97,7 +102,7 @@ Room.prototype.requestPlayers = function requestPlayers(connection,userId){
         	this._hasSpawnBots = true;
         }         
     }
-    else if(this._mode == "1")
+    else if(this._mode == PLAYER_MODE)
     {
     	this.multiplayer(connection);    
     }
