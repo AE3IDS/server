@@ -1,6 +1,7 @@
 
 var ClientConstant = require('./ClientConstant');
 var Bot = require('./Bot');
+var Card = require("../Card");
 // var MessageQueue = require('./MessageQueue');
 // var Message = require('./Message');
 
@@ -40,7 +41,27 @@ ClientModel.prototype.parse = function parse(msg)
 		case ClientConstant.LOBBYDETAILS_CODE:
 			lobbyHandler(this, data);
 		break;
+
+		case ClientConstant.CARD_CODE:
+			cardCodeHandler(this,data);
+		break;
 	}
+}
+
+function cardCodeHandler(elem, data)
+{
+	var cards = data["cards"];
+	var temp = [];
+
+	for(var i = 0; i < cards.length; i++)
+	{
+		var suit = cards[i]["_suit"];
+		var kind = cards[i]["_kind"];
+
+		temp.push(new Card(suit,kind));
+	}
+
+	elem._bot.addCards(temp);
 }
 
 function requestAvatarHandler(elem, data)
@@ -56,7 +77,7 @@ function requestAvatarHandler(elem, data)
 function lobbyHandler(elem, data)
 {
 	elem._bot.setUserId(data["userId"]);
-	
+
 	var greetData = {"userId":elem._bot.getUserId()};
 	greetData = makeJSON(ClientConstant.GREET_CODE, greetData);
 
