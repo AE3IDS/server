@@ -8,6 +8,7 @@ var Deck = require('./Deck');
 var Message = require('./Message');
 var MessageQueue = require('./MessageQueue');
 var Round = require('./Round');
+var BotSpawner = require('./BotSpawner');
 
 function Room(seq, rules, mode){
 
@@ -52,6 +53,15 @@ Room.prototype.getNumberOfPlayers = function getNumberOfPlayers()
 Room.prototype.getRoomId = function getRoomId()
 {
     return this._roomId;
+}
+
+Room.prototype.requestAvatars = function requestAvatars(conn)
+{
+	var photoIds = this._players.map(function(item){
+		return item.getPhotoId();
+	});
+
+	this.sendTo(conn, Constants.REQUESTAVATARS_CODE, photoIds);
 }
 
 Room.prototype.checkPlayerWithId = function checkPlayerWithId(userId){
