@@ -91,21 +91,14 @@ Room.prototype.requestPlayers = function requestPlayers(connection,userId){
 
 	// Singleplayer mode
 	
-    if(this._mode == BOT_MODE)
-    {    
-        if(!this._hasSpawnBots)
-        {
-        	this._state = 1;
-       		this.sendState(connection);
+    this.multiplayer(connection, 2);
 
-        	BotSpawner(this._roomId,1);
-        	this._hasSpawnBots = true;
-        }         
-    }
-    else if(this._mode == PLAYER_MODE)
+    if(this._mode == BOT_MODE && !this._hasSpawnBots)
     {
-    	this.multiplayer(connection);    
+    	BotSpawner(this._roomId,1);
+        this._hasSpawnBots = true;
     }
+
 }
 
 
@@ -428,7 +421,7 @@ Room.prototype.getPlayerWithId = function getPlayerWithId(userId)
 }
 
 
-Room.prototype.multiplayer = function multiplayer(conn)
+Room.prototype.multiplayer = function multiplayer(conn, maxNumOfPeople)
 {
 	var sliced = this._players.slice(0,this._players.length-1);
 	var added = this._players[this._players.length-1];
@@ -444,14 +437,14 @@ Room.prototype.multiplayer = function multiplayer(conn)
 		_this.sendTo(item.getConn(),Constants.NEWPLAYER_CODE,playerAdded)
 	});
 
-	if(this._players.length == 2)
+	if(this._players.length == maxNumOfPeople)
 	{
 		this.requestCards();
 	}
 	else
 	{
-		this._state = 3;
-		this.sendState();
+    	this._state = (this._mode == BOT_MODE) ? 1 : 3;
+    	this.sendState(conn);
 	}
 }
 
