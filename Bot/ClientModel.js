@@ -36,6 +36,10 @@ ClientModel.prototype.parse = function parse(msg)
 		case ClientConstant.REQUESTAVATARS_CODE:
 			requestAvatarHandler(this, data);
 		break;
+
+		case ClientConstant.LOBBYDETAILS_CODE:
+			lobbyHandler(this, data);
+		break;
 	}
 }
 
@@ -47,6 +51,16 @@ function requestAvatarHandler(elem, data)
 	joinData = makeJSON(ClientConstant.JOINGAME_CODE,joinData);
 
 	elem._socket.send(joinData);
+}
+
+function lobbyHandler(elem, data)
+{
+	elem._bot.setUserId(data["userId"]);
+	
+	var greetData = {"userId":elem._bot.getUserId()};
+	greetData = makeJSON(ClientConstant.GREET_CODE, greetData);
+
+	elem._socket.send(greetData);
 }
 
 function makeJSON(code, data)
