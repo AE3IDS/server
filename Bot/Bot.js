@@ -4,6 +4,12 @@ function Bot(){
 
     this._userId = undefined;
     this._photoId = -1;
+    this._cards = [];
+}
+
+Bot.prototype.addCards = function addCards(cards)
+{
+    this._cards = cards;
 }
 
 
@@ -30,7 +36,7 @@ Bot.prototype.getPhotoId = function getPhotoId()
 
 Bot.prototype.setUserId = function setUserId(userId)
 {
-    this._userId = user
+    this._userId = userId;
 }
 
 Bot.prototype.getUserId = function getUserId()
