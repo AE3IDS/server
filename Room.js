@@ -66,8 +66,7 @@ Room.prototype.requestAvatars = function requestAvatars(conn)
 	var photoIds = this._players.map(function(item){
 		return item.getPhotoId();
 	});
-	
-	console.log(photoIds);
+
 	this.sendTo(conn, Constants.REQUESTAVATARS_CODE, photoIds);
 }
 
@@ -386,6 +385,8 @@ Room.prototype.getPlayerWithId = function getPlayerWithId(userId)
 Room.prototype.multiplayer = function multiplayer(conn, maxNumOfPeople, userId)
 {
 
+	var isLastPlayer = false;
+
 	if(this._players.length > 1)
 	{
 		var Ids = this._players.map(function(item){
@@ -394,11 +395,12 @@ Room.prototype.multiplayer = function multiplayer(conn, maxNumOfPeople, userId)
 
 		var idIndex = Ids.indexOf(userId);
 
+		isLastPlayer = idIndex == maxNumOfPeople -1;
+
 		var sliced = this._players.slice(0,idIndex);
 		var added = this._players[idIndex];
 
 		var _this = this;
-
 
 		sliced.forEach(function(item)
 		{
@@ -410,9 +412,9 @@ Room.prototype.multiplayer = function multiplayer(conn, maxNumOfPeople, userId)
 		});
 	}
 
-	if(this._players.length == maxNumOfPeople)
+	if(isLastPlayer)
 	{
-		// this.requestCards();
+		this.requestCards();
 	}
 	else
 	{
