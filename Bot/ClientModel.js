@@ -7,12 +7,18 @@ var ClientConstant = require('./ClientConstant');
 function ClientModel(roomId){
 
     this._roomId = roomId;
+    this._socket = undefined;
 }
 
-ClientModel.prototype.requestAvatar = function requestAvatar(ws)
+ClientModel.prototype.setSocket = function setSocket(sock)
+{
+	this._socket = sock;
+}
+
+ClientModel.prototype.requestAvatar = function requestAvatar()
 {   
     var s = makeJSON(ClientConstant.REQUESTAVATARS_CODE,{"roomId":this._roomId});
-    ws.send(s);
+    this._socket.send(s);
 }
 
 function makeJSON(code, data)
