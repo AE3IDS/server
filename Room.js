@@ -13,6 +13,7 @@ var BotSpawner = require('./BotSpawner');
 
 const BOT_MODE = "0";
 const PLAYER_MODE = "1";
+const ROOMCREATOR_INDEX = 0;
 
 
 function Room(seq, rules, mode){
@@ -113,15 +114,21 @@ Room.prototype.getFirstTurn = function getFirstTurn(conn, userId)
 	this._state = 4;
 	this.sendState(conn);
 
-	var index =  this._deck.getIndexStartCard();
-	var playerWithTurn = getPlayerForIndex(index, this._players, this._bots);
+	var isRoomOwner = this._players[ROOMCREATOR_INDEX].getUserId() == userId;
 
-	playerWithTurn = this._players[0];
+	if(isRoomOwner)
+	{
+		var index =  this._deck.getIndexStartCard();
+		var playerWithTurn = getPlayerForIndex(index, this._players, this._bots);
 
-	var data = {"userId":playerWithTurn.getUserId(),
+		playerWithTurn = this._players[0];
+
+		 data = {"userId":playerWithTurn.getUserId(),
 			"photoId":playerWithTurn.getPhotoId()}
 
-	this.sendTo(conn,Constants.TURN_CODE,data);
+		this.sendToAll(Constants.TURN_CODE,data);
+	}
+
 }
 
 /* ============= Helper Function for Turn-switching ============= */
