@@ -87,10 +87,9 @@ Room.prototype.checkPlayerWithId = function checkPlayerWithId(userId){
 /* ==================================================== */
 
 
-Room.prototype.requestPlayers = function requestPlayers(connection,userId){
+Room.prototype.requestPlayers = function requestPlayers(connection,userId)
+{
 
-	// Singleplayer mode
-	
     this.multiplayer(connection, 2);
 
     if(this._mode == BOT_MODE && !this._hasSpawnBots)
@@ -101,44 +100,6 @@ Room.prototype.requestPlayers = function requestPlayers(connection,userId){
 
 }
 
-
-
-Room.prototype.addBot = function addBot(conn, numOfBots){
-
-    var players = this._players;
-    var bots = this._bots;
-
-    while(numOfBots != 0)
-    {
-    	 var selectedPhotoIds  = players.map(function(item){
-           return item.getPhotoId();
-        })
-
-        var botPhotoIds = bots.map(function(item){
-           return item.getPhotoId();
-        })
-    
-        var allPhotoIds = selectedPhotoIds.concat(botPhotoIds);
-
-        /* end populate */
-
-        var bt = new Bot(allPhotoIds);
-       	this._bots.push(bt);       
-
-        numOfBots--;
-    }
-
-    /* Send bot to clients */
-
-	var data = this._bots.map(function(item){
-		return {"userId":item.getUserId(),"photoId":item.getPhotoId()}
-	});
-
-	var msg = new Message(Constants.NEWPLAYER_CODE,data);     
-    MessageQueue.send(conn,[msg]);
-        
-    // e.emit('avatar');	
-}
 
 /* ============================================================= */
 
