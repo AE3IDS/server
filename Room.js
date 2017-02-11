@@ -2,7 +2,7 @@
 var Chance = require('chance').Chance();
 var Player = require("./Player");
 var colors = require('colors');
-var Bot = require('../bot/Bot');
+// var Bot = require('../bot/Bot');
 var Constants = require('./Constants');
 var Deck = require('./Deck');
 var Message = require('./Message');
@@ -22,6 +22,7 @@ function Room(seq, rules, mode){
 	this._roomId = "R1";
 	this._roundNum = 1;
 	this._maxNumberOfPeople = 2;
+	this._hasSpawnBots = false;
 
 	this._round = new Round(this._rules,this._maxNumberOfPeople-1);
 
@@ -87,9 +88,14 @@ Room.prototype.requestPlayers = function requestPlayers(connection,userId){
 	
     if(this._mode == "0")
     {    
-        this._state = 1;
-        this.sendState(connection);
-        this.addBot(connection, 3);          
+        if(!this._hasSpawnBots)
+        {
+        	this._state = 1;
+       		this.sendState(connection);
+
+        	BotSpawner(this._roomId,1);
+        	this._hasSpawnBots = true;
+        }         
     }
     else if(this._mode == "1")
     {
