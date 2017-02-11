@@ -45,10 +45,26 @@ ClientModel.prototype.parse = function parse(msg)
 		case ClientConstant.CARD_CODE:
 			cardCodeHandler(this,data);
 		break;
+
+		case ClientConstant.MOVE_CODE:
+			moveCodeHandler(this, data);
+		break;
 	}
 }
 
+function moveCodeHandler(elem, data)
+{
+	var cards = parseCards(data);
+	elem._bot.addMoveCard(cards);
+}
+
 function cardCodeHandler(elem, data)
+{
+	var cards = parseCards(data);
+	elem._bot.addCards(cards);
+}
+
+function parseCards(data)
 {
 	var cards = data["cards"];
 	var temp = [];
@@ -61,7 +77,7 @@ function cardCodeHandler(elem, data)
 		temp.push(new Card(suit,kind));
 	}
 
-	elem._bot.addCards(temp);
+	return temp;
 }
 
 function requestAvatarHandler(elem, data)
