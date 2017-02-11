@@ -141,6 +141,19 @@ function passTurnCodeHandler(data, rooms)
     room.passTurnHandler(userId);
 }
 
+function requestAvatarsHandler(conn, data, rooms)
+{
+    var requestedRoom = data.data.roomId;
+    var r = rooms.filter(function(item){
+        return (item.getRoomId() == requestedRoom)
+    })
+
+    var room = r.pop();
+    room.requestAvatars(conn);
+
+}
+
+
 Game.prototype.handleMessage = function(connection,dt){
 
     var data = JSON.parse(dt);
@@ -186,6 +199,10 @@ Game.prototype.handleMessage = function(connection,dt){
             
         case Constant.FETCHRULE_CODE:
             fetchRuleHandler(connection,this._rulesHandler);
+            break;
+
+        case Constant.REQUESTAVATARS_CODE:
+            requestAvatarsHandler(connection, data, this._rooms);
             break;
     }       
 
