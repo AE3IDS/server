@@ -5,11 +5,18 @@ function Bot(){
     this._userId = undefined;
     this._photoId = -1;
     this._cards = [];
+    this._prevMoveCards = [];
 }
 
 Bot.prototype.addCards = function addCards(cards)
 {
     this._cards = cards;
+} 
+
+
+Bot.prototype.addMoveCard = function addMoveCard(cards)
+{
+    this._prevMoveCards.push(cards);
 }
 
 
