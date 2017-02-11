@@ -66,7 +66,8 @@ Room.prototype.requestAvatars = function requestAvatars(conn)
 	var photoIds = this._players.map(function(item){
 		return item.getPhotoId();
 	});
-
+	
+	console.log(photoIds);
 	this.sendTo(conn, Constants.REQUESTAVATARS_CODE, photoIds);
 }
 
@@ -90,11 +91,11 @@ Room.prototype.checkPlayerWithId = function checkPlayerWithId(userId){
 Room.prototype.requestPlayers = function requestPlayers(connection,userId)
 {
 
-    this.multiplayer(connection, 2);
+    this.multiplayer(connection, 4, userId);
 
     if(this._mode == BOT_MODE && !this._hasSpawnBots)
     {
-    	BotSpawner(this._roomId,1);
+    	BotSpawner(this._roomId,3);
         this._hasSpawnBots = true;
     }
 
@@ -382,25 +383,36 @@ Room.prototype.getPlayerWithId = function getPlayerWithId(userId)
 }
 
 
-Room.prototype.multiplayer = function multiplayer(conn, maxNumOfPeople)
+Room.prototype.multiplayer = function multiplayer(conn, maxNumOfPeople, userId)
 {
-	var sliced = this._players.slice(0,this._players.length-1);
-	var added = this._players[this._players.length-1];
 
-	var _this = this;
-
-	sliced.forEach(function(item)
+	if(this._players.length > 1)
 	{
-		var existPlayer = [{"userId":item.getUserId(),"photoId":item.getPhotoId()}];
-		_this.sendTo(conn,Constants.NEWPLAYER_CODE,existPlayer);
+		var Ids = this._players.map(function(item){
+			return item.getUserId();
+		})
 
-		var playerAdded = [{"userId":added.getUserId(),"photoId":added.getPhotoId()}];
-		_this.sendTo(item.getConn(),Constants.NEWPLAYER_CODE,playerAdded)
-	});
+		var idIndex = Ids.indexOf(userId);
+
+		var sliced = this._players.slice(0,idIndex);
+		var added = this._players[idIndex];
+
+		var _this = this;
+
+
+		sliced.forEach(function(item)
+		{
+			var existPlayer = [{"userId":item.getUserId(),"photoId":item.getPhotoId()}];
+			_this.sendTo(conn,Constants.NEWPLAYER_CODE,existPlayer);
+
+			var playerAdded = [{"userId":added.getUserId(),"photoId":added.getPhotoId()}];
+			_this.sendTo(item.getConn(),Constants.NEWPLAYER_CODE,playerAdded)
+		});
+	}
 
 	if(this._players.length == maxNumOfPeople)
 	{
-		this.requestCards();
+		// this.requestCards();
 	}
 	else
 	{
