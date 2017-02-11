@@ -33,7 +33,7 @@ Bot.prototype.setUserId = function setUserId(userId)
     this._userId = user
 }
 
-Bot.prototype.getUserId = function getUserId(userId)
+Bot.prototype.getUserId = function getUserId()
 {
     return this._userId
 }
