@@ -2,7 +2,7 @@ var Chance = require('chance').Chance();
 
 function Bot(){
 
-    this._userId = Chance.string({length:5}); 
+    this._userId = undefined;
     this._photoId = -1;
 }
 
@@ -26,6 +26,18 @@ Bot.prototype.getPhotoId = function getPhotoId()
 {
     return this._photoId;
 }
+
+
+Bot.prototype.setUserId = function setUserId(userId)
+{
+    this._userId = user
+}
+
+Bot.prototype.getUserId = function getUserId(userId)
+{
+    return this._userId
+}
+
 
 module.exports = Bot;
 
