@@ -21,6 +21,15 @@ ClientModel.prototype.requestAvatar = function requestAvatar()
     this._socket.send(s);
 }
 
+ClientModel.prototype.parse = function parse(msg)
+{
+	var parsedJSON = JSON.parse(msg);
+	var content = (parsedJSON.pop())["response"]
+
+	var code = content["code"];
+	var data = content["data"];
+}
+
 function makeJSON(code, data)
 {
     var data1 = {"code":code,"data":data};
