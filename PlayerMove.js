@@ -93,6 +93,11 @@ PlayerMove.prototype.checkExtraRules = function checkExtraRules(rules)
     return output;
 }
 
+PlayerMove.prototype.getExtraRules = function getExtraRules()
+{
+    return this._extraRules;
+}
+
 PlayerMove.prototype.getUserId = function getUserId()
 {
     return this._userId;
