@@ -79,6 +79,8 @@ Round.prototype.checkMoveExtra = function checkMoveExtra(cards)
 
         if(output["later"])
             this._laterRules = output["later"];
+
+        this._movesWithExtraRules.push(output["item"]);
     }
     else
     {
