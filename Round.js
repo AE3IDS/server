@@ -35,7 +35,7 @@ Round.prototype.addMove = function addMove(isPass, userId, cards)
         }
         else if (!curr && !prev) 
         {
-            isMoveValid = currMove.check(this._rules,prevMove);
+            isMoveValid = currMove.check(this._rules,prevMove, this._movesWithExtraRules);
         }
         else
         {
@@ -44,7 +44,7 @@ Round.prototype.addMove = function addMove(isPass, userId, cards)
     }
 
     if(isPass == false && isMoveValid == undefined)
-        isMoveValid = currMove.check(this._rules);
+        isMoveValid = currMove.check(this._rules, undefined, this._movesWithExtraRules);
 
     if(isMoveValid || isPass == true)
     {
@@ -79,6 +79,10 @@ Round.prototype.checkMoveExtra = function checkMoveExtra(cards)
 
         if(output["later"])
             this._laterRules = output["later"];
+
+
+        this._movesWithExtraRules.push(currMove);
+
     }
     else
     {
