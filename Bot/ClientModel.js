@@ -49,8 +49,43 @@ ClientModel.prototype.parse = function parse(msg)
 		case ClientConstant.MOVE_CODE:
 			moveCodeHandler(this, data);
 		break;
+
+		case ClientConstant.TURN_CODE:
+			turnCodeHandler(this, data);
+		break;
 	}
 }
+
+function turnCodeHandler(elem, data)
+{
+	var turnId = data["userId"];
+
+	if(elem._bot.getUserId() == turnId)
+	{
+
+		setTimeout(function(){
+
+			var turnCard = elem._bot.getTurnCards();
+
+			if(turnCard != undefined)
+			{
+				var moveData = {"userId":elem._bot.getUserId(),"cards":turnCard};
+				moveData = makeJSON(ClientConstant.MOVE_CODE, moveData);
+
+				elem._socket.send(moveData);
+			}
+			else
+			{
+				var passTurnData = {"userId":elem._bot.getUserId()};
+				passTurnData = makeJSON(ClientConstant.PASSTURN_CODE, passTurnData);
+
+				elem._socket.send(passTurnData);
+			}
+
+		}, 5000)
+	}
+}
+
 
 function moveCodeHandler(elem, data)
 {
