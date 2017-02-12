@@ -7,7 +7,7 @@ function Round(rules, n){
 	this._rules = rules;
 	this._moves = [];
 	this._passNumMax = n;
-    this._movesWithExtraRules = [];
+    this._appliedExtraRules = [];
 }
 
 
@@ -71,14 +71,24 @@ Round.prototype.checkMoveExtra = function checkMoveExtra(cards)
     }
     else
     {
-        this._movesWithExtraRules.push(rules["item"]);
+        this.appliedExtraRules.push(rules["item"]);
         return rules["rules"];
     }
 }
 
 Round.prototype.hasPassedMax = function hasPassedMax()
 {
-	return (this._numOfPass == this._passNumMax);
+    var hasWin = false;
+
+    var isMaxPass = (this._numOfPass == this._passNumMax);
+
+    if(isMaxPass)
+    {
+        var index = this._moves.length - this._passNumMax-1;
+        hasWin = !this._moves[index].isMoveTypePass();
+    }
+
+    return hasWin;
 }
 
 
