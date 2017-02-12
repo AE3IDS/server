@@ -62,18 +62,27 @@ Round.prototype.addMove = function addMove(isPass, userId, cards)
 
 Round.prototype.checkMoveExtra = function checkMoveExtra(cards)
 {
-    var currMove = this._moves[this._moves.length-1];
-    var rules = currMove.checkExtraRules(this._rules);
+    var currMove = new PlayerMove(undefined, undefined, cards);
+    var newOutput = {};
 
-    if(rules["rules"].length == 0)
-    {
-        return undefined;
+    var output = currMove.checkExtraRules(this._rules);
+    
+    console.log(output);
+
+    if(output != undefined) // Doesnt satisfy any extra rules
+    {   
+        newOutput["newRound"] = output["newRound"];
+
+        if(output["now"])
+            newOutput["now"] = output["now"];
     }
     else
     {
-        this.appliedExtraRules.push(rules["item"]);
-        return rules["rules"];
+        newOutput = undefined;
     }
+
+
+    return newOutput;
 }
 
 Round.prototype.hasPassedMax = function hasPassedMax()
