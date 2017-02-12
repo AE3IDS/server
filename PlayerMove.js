@@ -11,18 +11,29 @@ function PlayerMove(isPass,userId, data)
 
 PlayerMove.prototype.check = function check(rules, prevPlayerMove)
 {
-    var isGeneralRuleSatisfy = rules[GENERALRULE_INDEX].checkCard(this._data);
+
+}
+
+
+PlayerMove.prototype.generalRuleCheck = function generalRuleCheck()
+{
+    return rules[GENERALRULE_INDEX].checkCard(this._data);
+}
+
+
+PlayerMove.prototype.strengthAndLengthCheck = function strengthAndLengthCheck(reverse, prev)
+{
     var isValid = true;
 
-    if(prevPlayerMove != undefined)
+    if(prev != undefined)
     {
         isValid = this.isMoveEqualLength(prevPlayerMove);
+
         if(isValid)
-            isValid = this.isMoveStronger(false, prevPlayerMove);
+            isValid = this.isMoveStronger(reverse, prev);
     }
 
-    var allRuleSatisfied = (isGeneralRuleSatisfy && isValid);
-    return allRuleSatisfied;
+    return isValid
 }
 
 
