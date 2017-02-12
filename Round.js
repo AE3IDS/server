@@ -93,6 +93,19 @@ Round.prototype.checkMoveExtra = function checkMoveExtra(cards)
     return newOutput;
 }
 
+Round.prototype.getLaterRules = function getLaterRules()
+{
+    var data = undefined;
+
+    if(this._laterRules.length > 0)
+    {
+        var laterRule = this._laterRules.pop();
+        data = [laterRule];
+    }
+    
+    return data;
+}
+
 Round.prototype.hasPassedMax = function hasPassedMax()
 {
     var hasWin = false;
