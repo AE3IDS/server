@@ -7,7 +7,8 @@ function Round(rules, n){
 	this._rules = rules;
 	this._moves = [];
 	this._passNumMax = n;
-    this._appliedExtraRules = [];
+    this._movesWithExtraRules = [];
+    this._laterRules = [];
 }
 
 
@@ -75,6 +76,9 @@ Round.prototype.checkMoveExtra = function checkMoveExtra(cards)
 
         if(output["now"])
             newOutput["now"] = output["now"];
+
+        if(output["later"])
+            this._laterRules = output["later"];
     }
     else
     {
