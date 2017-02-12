@@ -2,7 +2,7 @@
 var Chance = require('chance').Chance();
 var Player = require("./Player");
 var colors = require('colors');
-var Bot = require('../bot/Bot');
+// var Bot = require('../bot/Bot');
 var Constants = require('./Constants');
 var Deck = require('./Deck');
 var Message = require('./Message');
@@ -243,8 +243,9 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
     player.removeCards();
    	player.addDealtCards(data);
 
+   	var extraRules = this._round.checkMoveExtra(player.getDealtCards());
     var status = this._round.addMove(false,userId,player.getDealtCards());
-    var extraRules = this._round.checkMoveExtra();
+    
     console.log(extraRules);
 
     if(status)
@@ -265,9 +266,11 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
 
     		if(extraRules)
     		{
+    			var e = extraRules["now"];
+
     			setTimeout(function(){
 
-    				elem.sendToAll(Constants.RULES_LIST, extraRules)
+    				elem.sendToAll(Constants.RULES_LIST, e)
 
     			},2500);
 
