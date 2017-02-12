@@ -9,9 +9,40 @@ function PlayerMove(isPass,userId, data)
     this._extraRules = [];
 }
 
-PlayerMove.prototype.check = function check(rules, prevPlayerMove)
+PlayerMove.prototype.check = function check(rules, prevPlayerMove, movesWithExtraRules)
 {
 
+    var extraRulelength = movesWithExtraRules.length;
+
+    if(extraRulelength != 0)
+    {
+        var move = movesWithExtraRules[0]
+        var moveRules = move.getExtraRules();
+
+        for(var i = 0; i < moveRules.length; i++)
+        {
+            var item = moveRules[i];
+
+            /* expect only one item */
+
+            var r = rules.filter(function(itemRule){
+                return (itemRule.getId() == item);
+            })[0];
+
+
+            if(r.isActive())
+            {
+                var g = (item == "R4" || item == "R2");
+                return this.strengthAndLengthCheck(g,prevPlayerMove);
+            }
+            else
+            {
+                r.activate();
+            }
+        }
+    }
+
+    return (this.generalRuleCheck() && this.strengthAndLengthCheck(false,prevPlayerMove));
 }
 
 
@@ -27,7 +58,7 @@ PlayerMove.prototype.strengthAndLengthCheck = function strengthAndLengthCheck(re
 
     if(prev != undefined)
     {
-        isValid = this.isMoveEqualLength(prevPlayerMove);
+        isValid = this.isMoveEqualLength(prev);
 
         if(isValid)
             isValid = this.isMoveStronger(reverse, prev);
@@ -79,7 +110,7 @@ PlayerMove.prototype.checkExtraRules = function checkExtraRules(rules)
 
         })
 
-        output = {"item":this};
+        output = {};
 
         if(nowRules.length > 0)
             output["now"] = nowRules;
