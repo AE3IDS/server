@@ -8,7 +8,7 @@ function EightEndersRule(){
     var description = "Terminate the round when any player deals and 8 card";
     var ruleId = "R1";
 
-    Rule.call(this,name,description,ruleId);
+    Rule.call(this,name,description,ruleId, true);
 }
 
 EightEndersRule.prototype = new Rule();

@@ -1,9 +1,20 @@
 
-function Rule(name,description,id)
+function Rule(name,description,id, active)
 {    
     this.ruleName = name;
     this.description = description;
     this.ruleId = id;
+    this._isActive = active;
+}
+
+Rule.prototype.isActive = function isActive()
+{
+	return this._isActive;
+}
+
+Rule.prototype.activate = function activate()
+{
+	this._isActive = true;
 }
 
 Rule.prototype.checkCard = function checkCard(card){}
