@@ -32,21 +32,54 @@ PlayerMove.prototype.checkExtraRules = function checkExtraRules(rules)
     var splitRules = rules.slice(startIndex);
 
     var _this = this;
+    var output = undefined;
+
+    /* get all the extra rules that apply to the given cards */
 
     var applicableRules = splitRules.filter(function(rule){
         return (rule.checkCard(_this._data) == true);
     })
 
-    var rulesName = [];
 
-    applicableRules.forEach(function(item){
+    if(applicableRules.length > 0)
+    {
+         /* check if Eight Enders rule is present */
 
-        _this._extraRules.push(item.getId());
-        rulesName.push(item.getRuleName());
+        var hasNoEightEnders = applicableRules.filter(function(rule){
+            return rule.getId() == "R1";
+        }).length == 0
 
-    })
+        /* seperate the rules which one will apply in immediately and later after turn */
 
-    return {"item":this,"rules":rulesName};
+        var nowRules = [];
+        var laterRules = [];
+
+        applicableRules.forEach(function(item){
+
+            var ruleId = item.getId();
+            var ruleName = item.getRuleName();
+
+            _this._extraRules.push(ruleId);
+
+            if(ruleId == "R1" || ruleId == "R3" || hasNoEightEnders)
+                nowRules.push(ruleName)
+            else
+                laterRules.push(ruleName);
+
+        })
+
+        output = {"item":this};
+
+        if(nowRules.length > 0)
+            output["now"] = nowRules;
+
+        if(laterRules.length > 0)
+            output["later"] = laterRules;
+
+        output["newRound"] = !hasNoEightEnders;
+    }
+
+    return output;
 }
 
 PlayerMove.prototype.getUserId = function getUserId()
