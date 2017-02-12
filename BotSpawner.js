@@ -16,7 +16,7 @@ function BotSpawner(roomId, numOfBot)
         numOfBot--;
 
         if(numOfBot != 0)
-            setTimeout(spawnFunction,1500);
+            setTimeout(spawnFunction,1700);
 
     }
 
