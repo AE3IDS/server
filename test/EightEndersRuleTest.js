@@ -14,6 +14,14 @@ describe("EightEndersRuleTest",function(){
         expect(id).to.equal(true);
     })
 
+    it("isActive shall return true",function(){
+        
+        var eRule = new EightRule();
+        expect(eRule.isActive()).to.equal(true);
+    })
+
+
+
     it("getRuleName should return Eight Enders",function(){
         
         var eRule = new EightRule();
