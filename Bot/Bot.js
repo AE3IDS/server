@@ -1,6 +1,7 @@
 var Chance = require('chance').Chance();
 
 const JOKER_SUIT = 0;
+const JACK_KIND = 11;
 
 function Bot(){
 
@@ -38,6 +39,22 @@ Bot.prototype.setPhotoId = function setPhotoId(selectedPhotoIds)
     }            
 }
 
+/* ==================== Cards  ========================= */
+
+
+Bot.prototype.areCardsStronger = function areCardsStronger(reverse, prev)
+{
+    var isLarger = false;
+
+    (this._cards).forEach(function(item,index){
+
+        var tempIsLarger = item.isCardStronger(prev[index]);
+        isLarger = (reverse ? !tempIsLarger : tempIsLarger);
+
+    })
+
+    return isLarger;
+}
 
 Bot.prototype.getJokers = function getJokers()
 {
@@ -56,6 +73,10 @@ Bot.prototype.getTurnCards = function getTurnCards()
 {
     return undefined;
 }
+
+
+/* ==================== End Cards ========================= */
+
 
 
 Bot.prototype.getPhotoId = function getPhotoId()
