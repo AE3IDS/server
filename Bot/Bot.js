@@ -34,6 +34,11 @@ Bot.prototype.setPhotoId = function setPhotoId(selectedPhotoIds)
     }            
 }
 
+Bot.prototype.getTurnCards = function getTurnCards()
+{
+    return undefined;
+}
+
 
 Bot.prototype.getPhotoId = function getPhotoId()
 {
