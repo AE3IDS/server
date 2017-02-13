@@ -1,16 +1,20 @@
 var Chance = require('chance').Chance();
 
+const JOKER_SUIT = 0;
+
 function Bot(){
 
     this._userId = undefined;
     this._photoId = -1;
     this._cards = [];
     this._prevMoveCards = [];
+    this._jokersCardIndices = [];
 }
 
 Bot.prototype.addCards = function addCards(cards)
 {
     this._cards = cards;
+    this.getJokers();
 } 
 
 
@@ -33,6 +37,20 @@ Bot.prototype.setPhotoId = function setPhotoId(selectedPhotoIds)
         }
     }            
 }
+
+
+Bot.prototype.getJokers = function getJokers()
+{
+    var _this = this;
+
+    var jokerIndex = this._cards.forEach(function(item,index){
+
+        if(item.getSuit() == JOKER_SUIT)
+            _this._jokersCardIndices.push(index);
+
+    })
+}
+
 
 Bot.prototype.getTurnCards = function getTurnCards()
 {
