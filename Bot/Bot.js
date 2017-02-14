@@ -42,6 +42,37 @@ Bot.prototype.setPhotoId = function setPhotoId(selectedPhotoIds)
 
 /* ==================== Cards  ========================= */
 
+Bot.prototype.removeCards = function removeCards(cards)
+{
+    var temp = [];
+
+    for(var j = 0; j < this._cards.length;j++)
+    {
+        var item = this._cards[j];
+        var isItemInCards = false;
+
+
+        var f = cards.filter(function(item1){
+
+            var sameKind = item.getKind() == item1.getKind();
+            var sameSuit = item.getSuit() == item1.getSuit();
+
+            return sameKind && sameSuit;
+
+        }).length
+
+        // f == 0, item is not in cards and not
+        // to be removed
+
+        if(f == 0)
+            temp.push(item);
+    }
+
+    this._cards = temp;
+
+}
+
+
 
 Bot.prototype.areCardsStronger = function areCardsStronger(reverse, cards, prev)
 {
