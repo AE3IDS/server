@@ -58,6 +58,8 @@ Bot.prototype.areCardsStronger = function areCardsStronger(reverse, prev)
 }
 
 
+/*  ---------------- General Rule ----------------------*/
+
 /* comparing function used to sort */
 
 Bot.prototype.sortBasedOnKind = function sortBasedOnKind(item1, item2)
@@ -100,6 +102,43 @@ Bot.prototype.lastIndexOfObjectWithRank = function lastIndexOfObjectWithRank(obj
 
     // return index;
 }
+
+Bot.prototype.getCardsWithQuantityOf = function getCardsWithQuantityOf(sorted, numOfCards)
+{
+    var counter = 0;
+    var _this = this;
+    var temp = [];
+
+    while(counter < sorted.length)
+    {
+        var m = sorted[counter][KIND_STR];
+        var lastIndex = this.lastIndexOfObjectWithRank(sorted, counter, m);
+
+        // Convert index to length
+
+        var num = lastIndex - counter + 1;
+
+        if(numOfCards == num)
+        {
+            // The card/s that has quantity of numOfCards
+
+            var slicedSorted = sorted.slice(counter, lastIndex+1);
+
+            var slicedCards = slicedSorted.map(function(item){
+                return _this._cards[item["pos"]]
+            });
+
+            temp.push(slicedCards)                                                                                                                                                  
+        }
+
+        counter = lastIndex + 1;
+    }
+
+    return temp;
+}
+
+/*  ---------------- End General Rule ----------------------*/
+
 
 Bot.prototype.getJokers = function getJokers()
 {
