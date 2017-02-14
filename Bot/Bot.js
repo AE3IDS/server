@@ -2,6 +2,7 @@ var Chance = require('chance').Chance();
 
 const JOKER_SUIT = 0;
 const JACK_KIND = 11;
+const KIND_STR = "kind"
 
 function Bot(){
 
@@ -55,6 +56,29 @@ Bot.prototype.areCardsStronger = function areCardsStronger(reverse, prev)
 
     return isLarger;
 }
+
+
+/* comparing function used to sort */
+
+Bot.prototype.sortBasedOnKind = function sortBasedOnKind(item1, item2)
+{
+    var item1Kind = item1[KIND_STR];
+    var item2Kind = item2[KIND_STR];
+
+    if(item1Kind < item2Kind)
+    {
+        return -1;
+    }
+    else if(item1Kind == item2Kind)
+    {
+        return 0;
+    }
+    else if(item1Kind > item2Kind)
+    {
+        return 1;
+    }
+}
+
 
 Bot.prototype.getJokers = function getJokers()
 {
