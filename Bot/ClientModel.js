@@ -90,7 +90,13 @@ function turnCodeHandler(elem, data)
 function moveCodeHandler(elem, data)
 {
 	var cards = parseCards(data);
-	elem._bot.addMoveCard(cards);
+
+	if(data["userId"] != elem._bot.getUserId())
+		elem._bot.addMoveCard(cards);
+	else
+	{
+		elem._bot.removeCards(cards);
+	}
 }
 
 function cardCodeHandler(elem, data)
