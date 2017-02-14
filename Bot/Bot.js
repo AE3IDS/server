@@ -80,6 +80,27 @@ Bot.prototype.sortBasedOnKind = function sortBasedOnKind(item1, item2)
 }
 
 
+
+Bot.prototype.lastIndexOfObjectWithRank = function lastIndexOfObjectWithRank(objects, startIndex, pivotKind)
+{
+    // var index = startIndex;
+
+    for(;startIndex < (objects.length);startIndex++)
+    {
+        if(objects[startIndex][KIND_STR] != pivotKind)
+        {
+            return startIndex - 1;
+        }
+        else
+        {
+            if(startIndex == objects.length - 1)
+                return startIndex;
+        }
+    }
+
+    // return index;
+}
+
 Bot.prototype.getJokers = function getJokers()
 {
     var _this = this;
