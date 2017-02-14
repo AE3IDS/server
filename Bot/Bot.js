@@ -43,11 +43,11 @@ Bot.prototype.setPhotoId = function setPhotoId(selectedPhotoIds)
 /* ==================== Cards  ========================= */
 
 
-Bot.prototype.areCardsStronger = function areCardsStronger(reverse, prev)
+Bot.prototype.areCardsStronger = function areCardsStronger(reverse, cards, prev)
 {
     var isLarger = false;
 
-    (this._cards).forEach(function(item,index){
+    cards.forEach(function(item,index){
 
         var tempIsLarger = item.isCardStronger(prev[index]);
         isLarger = (reverse ? !tempIsLarger : tempIsLarger);
