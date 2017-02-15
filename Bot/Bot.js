@@ -124,7 +124,51 @@ Bot.prototype.getCardsForJackBack = function getCardsForJackBack(reverse, prevMo
     return output;
 }
 
+/*  ----------------- Revolution Rule --------------------- */
 
+
+Bot.prototype.getCardsForRevolution = function getCardsForRevolution(reverse, prevMove)
+{
+    var h = this._cards.map(function(item,index){
+        return {"pos":index,"kind":item.getKind()};
+    })
+
+    var sortedH = h.sort(this.sortBasedOnKind);
+    var cards = this.getCardsWithQuantityOf(sortedH, REVOLUTION_NUM_OF_CARDS);
+
+    var output = undefined;
+    
+
+
+    if(cards.length > 0)
+    {
+
+        // take the last element as it contains
+        // the cards with the largest kind
+
+        var temp = cards[cards.length - 1];
+
+        if(!prevMove)
+        {
+            output = temp;
+        }
+        else
+        {
+            if(temp.length == prevMove.length)
+            {
+                if(this.areCardsStronger(reverse, temp, prevMove))
+                    output = temp;
+            }
+        }  
+
+    }
+
+
+    return output;
+
+}
+
+/*  ---------------------------------------------------- */
 
 /*  ---------------- General Rule ----------------------*/
 
