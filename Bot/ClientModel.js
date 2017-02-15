@@ -20,8 +20,18 @@ ClientModel.prototype.setSocket = function setSocket(sock)
 
 ClientModel.prototype.initialize = function initialize()
 {   
+
+	/* request selected avatar by other players */
+
     var s = makeJSON(ClientConstant.REQUESTAVATARS_CODE,{"roomId":this._roomId});
     this._socket.send(s);
+
+
+    /* request rules of the room */
+
+    var rule = makeJSON(ClientConstant.BOTRULES_LIST, {"roomId":this._roomId});
+    this._socket.send(rule);
+
 }
 
 ClientModel.prototype.parse = function parse(msg)
