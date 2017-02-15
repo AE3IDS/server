@@ -44,6 +44,10 @@ ClientModel.prototype.parse = function parse(msg)
 
 	switch(code)
 	{
+		case ClientConstant.BOTRULES_LIST:
+			botRulesHandler(this, data);
+		break;
+
 		case ClientConstant.REQUESTAVATARS_CODE:
 			requestAvatarHandler(this, data);
 		break;
@@ -65,6 +69,13 @@ ClientModel.prototype.parse = function parse(msg)
 		break;
 	}
 }
+
+
+function botRulesHandler(elem, data)
+{
+	elem._bot.addRoomRules(data["rules"])
+}
+
 
 function turnCodeHandler(elem, data)
 {
