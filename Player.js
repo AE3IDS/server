@@ -21,6 +21,9 @@ Player.prototype.getCard = function getCard(){
     return this._cards;
 }
 
+/* -------------- _dealtCards property ---------------- */
+
+
 Player.prototype.addDealtCards = function addDealtCards(data){
 
     var dealtCards = this._dealtCards;
@@ -37,10 +40,14 @@ Player.prototype.getDealtCards = function getDealtCards(){
 }
 
 
-Player.prototype.removeCards = function removeCards(){
+Player.prototype.clearDealt = function clearDealt(){
 
     this._dealtCards.length = 0;
 }
+
+
+/* -------------- _dealtCards property ---------------- */
+
 
 /* -------------- _cardCount property ---------------- */
 
