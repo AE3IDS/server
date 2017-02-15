@@ -11,6 +11,7 @@ function Bot(){
     this._cards = [];
     this._prevMoveCards = [];
     this._jokersCardIndices = [];
+    this._roomRules = [];
 }
 
 Bot.prototype.addCards = function addCards(cards)
@@ -38,6 +39,12 @@ Bot.prototype.setPhotoId = function setPhotoId(selectedPhotoIds)
             break;
         }
     }            
+}
+
+
+Bot.prototype.addRoomRules = function addRoomRules(rules)
+{
+    this._roomRules = rules;
 }
 
 /* ==================== Cards  ========================= */
@@ -167,6 +174,7 @@ Bot.prototype.getCardsWithQuantityOf = function getCardsWithQuantityOf(sorted, n
 
     return temp;
 }
+
 
 /*  ---------------- End General Rule ----------------------*/
 
