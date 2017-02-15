@@ -8,7 +8,7 @@ ws.on('open',function()
 {
 	console.log("client connected");
 	client.setSocket(ws);
- 	client.requestAvatar(ws);
+ 	client.initialize();
 })
 
 ws.on('message',function(msg){
