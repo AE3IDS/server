@@ -91,11 +91,11 @@ Room.prototype.checkPlayerWithId = function checkPlayerWithId(userId){
 Room.prototype.requestPlayers = function requestPlayers(connection,userId)
 {
 
-    this.multiplayer(connection, 4, userId);
+    this.multiplayer(connection, 2, userId);
 
     if(this._mode == BOT_MODE && !this._hasSpawnBots)
     {
-    	BotSpawner(this._roomId,3);
+    	BotSpawner(this._roomId,1);
         this._hasSpawnBots = true;
     }
 
@@ -123,9 +123,7 @@ Room.prototype.getFirstTurn = function getFirstTurn(conn, userId)
 
 		playerWithTurn = this._players[0];
 
-		 data = {"userId":playerWithTurn.getUserId(),
-			"photoId":playerWithTurn.getPhotoId()}
-
+		var data = this.returnPlayerDetails(playerWithTurn);
 		this.sendToAll(Constants.TURN_CODE,data);
 	}
 
@@ -175,9 +173,8 @@ Room.prototype.getNextTurn = function getNextTurn(userId)
 		console.log("return");
 	}
 
-	var data = {"userId":playerWithTurn.getUserId(),
-			"photoId":playerWithTurn.getPhotoId(),
-			"prevTurnId":userId}
+	var data = this.returnPlayerDetails(playerWithTurn);
+	data["prevTurnId"] = userId;
 
 	return data;
 }
@@ -215,6 +212,7 @@ Room.prototype.helper = function helper(userId, func)
 	},720)
 }
 
+
 Room.prototype.removePlayerCards = function removePlayerCards(targetPlayer, numOfCards)
 {
 	targetPlayer.remove(numOfCards);
@@ -222,6 +220,8 @@ Room.prototype.removePlayerCards = function removePlayerCards(targetPlayer, numO
 	return (targetPlayer.getCardCount() == 0);
 
 }
+
+
 
 /* ================= End Helper Function ================ */
 
@@ -244,8 +244,8 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
     	{
     		/* Send the cards of the move */
 
-    		var data = {"userId":player.getUserId(),
-    					"cards":player.getDealtCards()};
+    		var data = elem.returnPlayerDetails(player);
+    		data["cards"] = player.getDealtCards();
 
     		elem.sendToAll(Constants.MOVE_CODE, data);
 
@@ -288,6 +288,7 @@ Room.prototype.passTurnHandler = function passTurnHandler(userId)
 
     var func = undefined;
 
+
     if(this._round.hasPassedMax())
     {
     	func = function(elem, nextTurnData, func)
@@ -305,11 +306,8 @@ Room.prototype.passTurnHandler = function passTurnHandler(userId)
     {
     	func = function(elem, nextTurnData, func)
     	{
-    		var data = {"userId":player.getUserId(),
-    					"photoId":player.getPhotoId()};
-
+    		var data = elem.returnPlayerDetails(player);
 			elem.sendToAll(Constants.PASSTURN_CODE,data);
-
 			func(nextTurnData);
     	}
     }
@@ -356,15 +354,18 @@ Room.prototype.requestCards = function requestCards(){
 			return (i.getUserId() != item.getUserId())
 		});
 
-		otherPlayers = otherPlayers.concat(bots);
-
 		otherPlayers.forEach(function(h){
-			var data = {"cards":h.getCard().length, "userId":h.getUserId()};
+
+			var data = _this.returnPlayerDetails(h);
+			data["cards"] = h.getCard().length;
+
 			_this.sendTo(i.getConn(), Constants.CARD_CODE, data);
+
 		});
 
-		var playerCard = i.getCard();
-		var data = {"cards":playerCard,"userId":i.getUserId()};
+		var data = _this.returnPlayerDetails(i);
+		data["cards"] = i.getCard();
+
 		_this.sendTo(i.getConn(), Constants.CARD_CODE, data)
 	})
 
@@ -380,6 +381,12 @@ Room.prototype.requestCards = function requestCards(){
 				/* Private methods */
 
 /* ==================================================== */
+
+Room.prototype.returnPlayerDetails = function returnPlayerDetails(player)
+{
+	return {"userId":player.getUserId(),"photoId":player.getPhotoId()};
+} 
+
 
 Room.prototype.sendNewRound = function sendNewRound(time)
 {
@@ -422,11 +429,11 @@ Room.prototype.multiplayer = function multiplayer(conn, maxNumOfPeople, userId)
 
 		sliced.forEach(function(item)
 		{
-			var existPlayer = [{"userId":item.getUserId(),"photoId":item.getPhotoId()}];
-			_this.sendTo(conn,Constants.NEWPLAYER_CODE,existPlayer);
+			var existPlayer = _this.returnPlayerDetails(item);
+			_this.sendTo(conn,Constants.NEWPLAYER_CODE,[existPlayer]);
 
-			var playerAdded = [{"userId":added.getUserId(),"photoId":added.getPhotoId()}];
-			_this.sendTo(item.getConn(),Constants.NEWPLAYER_CODE,playerAdded)
+			var playerAdded = _this.returnPlayerDetails(added);
+			_this.sendTo(item.getConn(),Constants.NEWPLAYER_CODE,[playerAdded])
 		});
 	}
 
