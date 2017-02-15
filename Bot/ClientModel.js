@@ -18,7 +18,7 @@ ClientModel.prototype.setSocket = function setSocket(sock)
 	this._socket = sock;
 }
 
-ClientModel.prototype.requestAvatar = function requestAvatar()
+ClientModel.prototype.initialize = function initialize()
 {   
     var s = makeJSON(ClientConstant.REQUESTAVATARS_CODE,{"roomId":this._roomId});
     this._socket.send(s);
