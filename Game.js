@@ -134,12 +134,27 @@ function fetchRuleHandler(conn, ruleHandler)
     MessageQueue.send(conn,[msg]);
 }
 
+
 function passTurnCodeHandler(data, rooms)
 {
     var userId = data.data.userId;
     var room = getRoomForUserId(userId,rooms);
     room.passTurnHandler(userId);
 }
+
+
+function botRulesHandler(conn, data, rooms)
+{
+    var roomId = data.data.roomId;
+
+    var r = rooms.filter(function(item){
+        return (item.getRoomId() == roomId);
+    })
+
+    var room = r[r.length - 1];
+    room.getRoomRules(conn);
+}
+
 
 function requestAvatarsHandler(conn, data, rooms)
 {
@@ -148,7 +163,7 @@ function requestAvatarsHandler(conn, data, rooms)
         return (item.getRoomId() == requestedRoom)
     })
 
-    var room = r.pop();
+    var room = r[r.length - 1];
     room.requestAvatars(conn);
 
 }
@@ -203,6 +218,10 @@ Game.prototype.handleMessage = function(connection,dt){
 
         case Constant.REQUESTAVATARS_CODE:
             requestAvatarsHandler(connection, data, this._rooms);
+            break;
+
+        case Constant.BOTRULES_LIST:
+            botRulesHandler(connection, data, this._rooms);
             break;
     }       
 
