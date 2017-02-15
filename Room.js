@@ -87,6 +87,17 @@ Room.prototype.checkPlayerWithId = function checkPlayerWithId(userId){
 
 /* ==================================================== */
 
+Room.prototype.getRoomRules = function getRoomRules(conn)
+{
+
+	var ruleId = this._rules.map(function(item){
+		return item.getId();
+	})
+
+	this.sendTo(conn, Constants.BOTRULES_LIST, {"rules":ruleId})
+
+}
+
 
 Room.prototype.requestPlayers = function requestPlayers(connection,userId)
 {
