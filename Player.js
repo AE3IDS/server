@@ -9,6 +9,7 @@ function Player(avatarId, conn){
     this._cards = [];
 	this._userId = Chance.string({length:5});
     this._connection = conn;
+    this._cardCount = 0;
 }
 
 
@@ -35,16 +36,36 @@ Player.prototype.getDealtCards = function getDealtCards(){
     return this._dealtCards;
 }
 
+
 Player.prototype.removeCards = function removeCards(){
 
     this._dealtCards.length = 0;
 }
 
+/* -------------- _cardCount property ---------------- */
 
 
-Player.prototype.addCard = function addCard(card){
-    this._cards = card
+Player.prototype.getCardCount = function getCardCount()
+{
+    return this._cardCount;
 }
+
+
+Player.prototype.remove = function remove(numOfCards)
+{
+    this._cardCount = this._cardCount - numOfCards;
+}
+
+
+/* -------------- _cardCount property ---------------- */
+
+
+Player.prototype.addCard = function addCard(card)
+{
+    this._cards = card
+    this._cardCount = card.length;
+}
+
 
 Player.prototype.hasCard = function hasCard(card){
     var r = this._cards.filter(function(val){
@@ -53,6 +74,7 @@ Player.prototype.hasCard = function hasCard(card){
 
     return r.length != 0;
 }
+
 
 Player.prototype.getPhotoId = function getPhotoId(){
     return this._photoId
