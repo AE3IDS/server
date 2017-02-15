@@ -3,6 +3,7 @@ var Chance = require('chance').Chance();
 const JOKER_SUIT = 0;
 const JACK_KIND = 11;
 const KIND_STR = "kind"
+const REVOLUTION_NUM_OF_CARDS = 4;
 
 function Bot(){
 
@@ -94,6 +95,35 @@ Bot.prototype.areCardsStronger = function areCardsStronger(reverse, cards, prev)
 
     return isLarger;
 }
+
+
+/* ----------------- Jack Back Rule ------------------ */
+
+
+Bot.prototype.getCardsForJackBack = function getCardsForJackBack(reverse, prevMove)
+{
+    var output = undefined;
+
+    var jackCards = this._cards.filter(function(item){
+        return item.getKind() == JACK_KIND;
+    })
+
+    if(!prevMove)
+    {
+        output = jackCards.length == 0?output:jackCards; 
+    }
+    else
+    {
+        if(jackCards.length == prevMove.length)
+        {
+            if(this.areCardsStronger(reverse, jackCards, prevMove))
+                output = jackCards;
+        } 
+    }
+
+    return output;
+}
+
 
 
 /*  ---------------- General Rule ----------------------*/
