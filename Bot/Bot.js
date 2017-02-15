@@ -3,6 +3,7 @@ var Chance = require('chance').Chance();
 const JOKER_SUIT = 0;
 const JACK_KIND = 11;
 const KIND_STR = "kind"
+const EIGHTENDERS_KIND = 8;
 const REVOLUTION_NUM_OF_CARDS = 4;
 
 function Bot(){
@@ -124,6 +125,34 @@ Bot.prototype.getCardsForJackBack = function getCardsForJackBack(reverse, prevMo
     return output;
 }
 
+
+/* ----------------- EightEnders Rule ------------------ */
+
+
+Bot.prototype.getCardsForEightEnders = function getCardsForEightEnders(reverse, prevMove)
+{
+    var output = undefined;
+
+    var eightCards = this._cards.filter(function(item){
+        return item.getKind() == EIGHTENDERS_KIND;
+    })
+
+    if(!prevMove)
+    {
+        output = eightCards.length == 0?output:eightCards; 
+    }
+    else
+    {
+        if(eightCards.length == prevMove.length)
+        {
+            if(this.areCardsStronger(reverse, eightCards, prevMove))
+                output = eightCards;
+        } 
+    }
+
+    return output;
+}
+
 /*  ----------------- Revolution Rule --------------------- */
 
 
@@ -137,7 +166,6 @@ Bot.prototype.getCardsForRevolution = function getCardsForRevolution(reverse, pr
     var cards = this.getCardsWithQuantityOf(sortedH, REVOLUTION_NUM_OF_CARDS);
 
     var output = undefined;
-    
 
 
     if(cards.length > 0)
