@@ -215,6 +215,14 @@ Room.prototype.helper = function helper(userId, func)
 	},720)
 }
 
+Room.prototype.removePlayerCards = function removePlayerCards(targetPlayer, numOfCards)
+{
+	targetPlayer.remove(numOfCards);
+
+	return (targetPlayer.getCardCount() == 0);
+
+}
+
 /* ================= End Helper Function ================ */
 
 
@@ -222,7 +230,7 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
 {
     var player = this.getPlayerWithId(userId);
 
-    player.removeCards();
+    player.clearDealt();
    	player.addDealtCards(data);
 
    	var extraRules = this._round.checkMoveExtra(player.getDealtCards());
