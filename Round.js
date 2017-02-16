@@ -9,6 +9,7 @@ function Round(rules, n){
 	this._passNumMax = n;
     this._movesWithExtraRules = [];
     this._laterRules = {};
+    this._startNewRound = false;
 }
 
 
@@ -72,7 +73,7 @@ Round.prototype.checkMoveExtra = function checkMoveExtra(cards)
 
     if(output != undefined) // Doesnt satisfy any extra rules
     {   
-        newOutput["newRound"] = output["newRound"];
+        this._startNewRound = output["newRound"];
 
         if(output["now"])
             newOutput["now"] = processRules(output["now"]);
@@ -82,7 +83,6 @@ Round.prototype.checkMoveExtra = function checkMoveExtra(cards)
 
 
         this._movesWithExtraRules.push(currMove);
-
     }
     else
     {
@@ -92,6 +92,7 @@ Round.prototype.checkMoveExtra = function checkMoveExtra(cards)
 
     return newOutput;
 }
+
 
 function processRules(rules)
 {
@@ -108,6 +109,12 @@ function processRules(rules)
     });
 
     return {"ruleName":name,"ruleId":id}
+}
+
+
+Round.prototype.willStartNewRound = function willStartNewRound()
+{
+    return this._startNewRound;
 }
 
 Round.prototype.getLaterRules = function getLaterRules()
