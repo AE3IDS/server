@@ -27,6 +27,15 @@ Bot.prototype.addCards = function addCards(cards)
 {
     this._cards = cards;
     this.getJokers();
+
+
+
+    /* ----- Logging ------ */
+
+    console.log("print cards");
+    this._cards.forEach(function(item){
+        console.log(item);
+    })
 } 
 
 
@@ -68,6 +77,7 @@ Bot.prototype.addRoomRules = function addRoomRules(rules)
 
 Bot.prototype.removeCards = function removeCards(cards)
 {
+
     var temp = [];
 
     for(var j = 0; j < this._cards.length;j++)
@@ -92,6 +102,12 @@ Bot.prototype.removeCards = function removeCards(cards)
         if(f == 0)
             temp.push(item);
     }
+
+
+    /* --- Logging -----*/ 
+
+    console.log("remove");
+    console.log(temp);
 
     this._cards = temp;
 
@@ -119,6 +135,13 @@ Bot.prototype.areCardsStronger = function areCardsStronger(reverse, cards, prev)
 
 Bot.prototype.getCardsForJackBack = function getCardsForJackBack(reverse, prevMove)
 {
+
+    /* ---- Logging -------*/
+
+    console.log("check for jack back")
+
+
+
     var output = undefined;
 
     var jackCards = this._cards.filter(function(item){
@@ -140,6 +163,13 @@ Bot.prototype.getCardsForJackBack = function getCardsForJackBack(reverse, prevMo
         } 
     }
 
+
+
+    /* ---- Logging -------*/
+
+    console.log("Move is")
+    console.log(output);
+
     return output;
 }
 
@@ -149,6 +179,13 @@ Bot.prototype.getCardsForJackBack = function getCardsForJackBack(reverse, prevMo
 
 Bot.prototype.getCardsForEightEnders = function getCardsForEightEnders(reverse, prevMove)
 {
+
+    /* ---- Logging -------*/
+
+    console.log("check for eight enders")
+
+
+
     var output = undefined;
 
     var eightCards = this._cards.filter(function(item){
@@ -170,6 +207,13 @@ Bot.prototype.getCardsForEightEnders = function getCardsForEightEnders(reverse, 
         } 
     }
 
+
+
+    /* ---- Logging -------*/
+
+    console.log("Move is")
+    console.log(output);
+
     return output;
 }
 
@@ -178,6 +222,13 @@ Bot.prototype.getCardsForEightEnders = function getCardsForEightEnders(reverse, 
 
 Bot.prototype.getCardsForRevolution = function getCardsForRevolution(reverse, prevMove)
 {
+
+     /* ---- Logging -------*/
+
+    console.log("check for revolution")
+
+
+
     var h = this._cards.map(function(item,index){
         return {"pos":index,"kind":item.getKind()};
     })
@@ -211,6 +262,11 @@ Bot.prototype.getCardsForRevolution = function getCardsForRevolution(reverse, pr
 
     }
 
+
+    /* ---- Logging -------*/
+
+    console.log("Move is")
+    console.log(output);
 
     return output;
 
@@ -301,6 +357,12 @@ Bot.prototype.getCardsWithQuantityOf = function getCardsWithQuantityOf(sorted, n
 
 Bot.prototype.getCardsForGeneralRule = function getCardsForGeneralRule(reverse, prevMove)
 {
+
+    /* ------ Logging -------*/
+
+     console.log("check for general rule")
+
+
     var h = this._cards.map(function(item,index){
         return {"pos":index,"kind":item.getKind()};
     })
@@ -312,6 +374,7 @@ Bot.prototype.getCardsForGeneralRule = function getCardsForGeneralRule(reverse, 
     var sortedH = h.sort(this.sortBasedOnKind);
     var cards = undefined;
 
+   
     if(!prevMove)
     {
 
@@ -326,12 +389,18 @@ Bot.prototype.getCardsForGeneralRule = function getCardsForGeneralRule(reverse, 
                 break;
         } 
 
+
+        /* ------ Logging -------*/
+
+        console.log("Move is")
+        console.log(cards[cards.length-1]);
+
         return cards[cards.length-1];
+
     }
     else
     {
         cards = this.getCardsWithQuantityOf(sortedH, prevMove.length);
-
 
         /* cards could be of zero length since it could be the case
         bot doesnt have the same amount of cards to be dealt as previous move */
@@ -341,8 +410,17 @@ Bot.prototype.getCardsForGeneralRule = function getCardsForGeneralRule(reverse, 
         {
             var strongestCards = reverse?cards[0]:cards[cards.length-1];
 
-            if (this.areCardsStronger(reverse, strongestCards, prevMove)) 
-                 return strongestCards;
+            if (this.areCardsStronger(reverse, strongestCards, prevMove))
+            {
+
+                /* ------ Logging -------*/
+
+                console.log("Move is")
+                console.log(cards[cards.length-1]);
+
+                return strongestCards;
+
+            }    
         }
     }
 
@@ -385,7 +463,6 @@ Bot.prototype.getTurnCards = function getTurnCards()
 
     if(cards == undefined)
         cards = this.getCardsForGeneralRule(this._isReverse, lastMove);
-
 
 
     return cards;
