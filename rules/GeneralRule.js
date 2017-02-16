@@ -4,7 +4,7 @@ function GeneralRule(){
     
     var name = "General";
     var description = "A";
-    var ruleId = "R1";
+    var ruleId = "S1";
 
     Rule.call(this,name,description,ruleId);
 }
