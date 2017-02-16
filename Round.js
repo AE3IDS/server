@@ -8,7 +8,7 @@ function Round(rules, n){
 	this._moves = [];
 	this._passNumMax = n;
     this._movesWithExtraRules = [];
-    this._laterRules = [];
+    this._laterRules = {};
 }
 
 
@@ -75,10 +75,10 @@ Round.prototype.checkMoveExtra = function checkMoveExtra(cards)
         newOutput["newRound"] = output["newRound"];
 
         if(output["now"])
-            newOutput["now"] = output["now"];
+            newOutput["now"] = processRules(output["now"]);
 
         if(output["later"])
-            this._laterRules = output["later"];
+            this._laterRules = processRules(output["later"]);
 
 
         this._movesWithExtraRules.push(currMove);
@@ -91,6 +91,23 @@ Round.prototype.checkMoveExtra = function checkMoveExtra(cards)
 
 
     return newOutput;
+}
+
+function processRules(rules)
+{
+    var name = [];
+    var id = [];
+
+    rules.forEach(function(item){
+
+        var ruleId = (Object.keys(item)).pop();
+
+        id.push(ruleId);
+        name.push(item[ruleId]);
+
+    });
+
+    return {"ruleName":name,"ruleId":id}
 }
 
 Round.prototype.getLaterRules = function getLaterRules()
