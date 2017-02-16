@@ -99,14 +99,13 @@ PlayerMove.prototype.checkExtraRules = function checkExtraRules(rules)
         applicableRules.forEach(function(item){
 
             var ruleId = item.getId();
-            var ruleName = item.getRuleName();
 
             _this._extraRules.push(ruleId);
 
             if(ruleId == "R1" || ruleId == "R3" || hasNoEightEnders)
-                nowRules.push(ruleName)
+                nowRules.push(item.getJSONInfo())
             else
-                laterRules.push(ruleName);
+                laterRules.push(item.getJSONInfo());
 
         })
 
