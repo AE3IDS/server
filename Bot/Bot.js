@@ -194,7 +194,7 @@ Bot.prototype.getCardsForRevolution = function getCardsForRevolution(reverse, pr
         // take the last element as it contains
         // the cards with the largest kind
 
-        var temp = cards[cards.length - 1];
+        var temp = reverse?cards[0]:cards[cards.length - 1];
 
         if(!prevMove)
         {
@@ -339,7 +339,7 @@ Bot.prototype.getCardsForGeneralRule = function getCardsForGeneralRule(reverse, 
 
         if(cards.length != 0)
         {
-            var strongestCards = cards[cards.length-1];
+            var strongestCards = reverse?cards[0]:cards[cards.length-1];
 
             if (this.areCardsStronger(reverse, strongestCards, prevMove)) 
                  return strongestCards;
