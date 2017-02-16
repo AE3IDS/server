@@ -67,7 +67,23 @@ ClientModel.prototype.parse = function parse(msg)
 		case ClientConstant.TURN_CODE:
 			turnCodeHandler(this, data);
 		break;
+
+		case ClientConstant.RULES_LIST:
+			ruleListHandler(this, data);
+		break;
 	}
+}
+
+
+function ruleListHandler(elem, data)
+{
+	var rules = data["ruleId"]; 
+
+	rules.forEach(function(item){
+
+		elem._bot.parseMoveRules(item);
+
+	})
 }
 
 
