@@ -9,6 +9,7 @@ const REVOLUTION_NUM_OF_CARDS = 4;
 const JACKBACKRULE_ID = "R2";
 const REVOLUTIONRULE = "R4";
 
+
 function Bot(){
 
     this._userId = undefined;
@@ -61,6 +62,7 @@ Bot.prototype.addRoomRules = function addRoomRules(rules)
 }
 
 /* ==================== Cards  ========================= */
+
 
 Bot.prototype.removeCards = function removeCards(cards)
 {
@@ -287,6 +289,41 @@ Bot.prototype.getCardsWithQuantityOf = function getCardsWithQuantityOf(sorted, n
     }
 
     return temp;
+}
+
+
+Bot.prototype.getCardsForGeneralRule = function getCardsForGeneralRule(reverse, prevMove)
+{
+    var h = this._cards.map(function(item,index){
+        return {"pos":index,"kind":item.getKind()};
+    })
+
+    // Sort the cards info of h based on value of kind property
+    // Sort it so just need to go the array once and not check 
+    // each item; 
+
+    var sortedH = h.sort(this.sortBasedOnKind);
+    var cards = undefined;
+
+    if(!prevMove)
+    {
+
+        // By iterating backwards; maximises the probability that the bot will deal 
+        // the most number of cards
+
+        for(var numOfCards = this._cards.length; numOfCards != 0; numOfCards--)
+        {
+            cards = this.getCardsWithQuantityOf(sortedH, numOfCards);
+            
+            if(cards.length != 0)
+                break;
+        } 
+
+        return cards[cards.length-1];
+    }
+
+    return undefined;
+
 }
 
 
