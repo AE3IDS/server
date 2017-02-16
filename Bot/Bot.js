@@ -8,6 +8,8 @@ const REVOLUTION_NUM_OF_CARDS = 4;
 
 const JACKBACKRULE_ID = "R2";
 const REVOLUTIONRULE = "R4";
+const EIGHTENDERSRULE_ID = "R1";
+const JOKERAREWILDRULE_ID = "R3";
 
 
 function Bot(){
@@ -83,8 +85,9 @@ Bot.prototype.removeCards = function removeCards(cards)
 
         }).length
 
-        // f == 0, item is not in cards and not
-        // to be removed
+
+        // A zero value f, indicates that 'item' is not in 
+        // cards, so not to be removed
 
         if(f == 0)
             temp.push(item);
@@ -328,7 +331,7 @@ Bot.prototype.getCardsForGeneralRule = function getCardsForGeneralRule(reverse, 
 
         /* cards could be of zero length since it could be the case
         bot doesnt have the same amount of cards to be dealt as previous move */
-        
+
 
         if(cards.length != 0)
         {
@@ -362,7 +365,27 @@ Bot.prototype.getJokers = function getJokers()
 
 Bot.prototype.getTurnCards = function getTurnCards()
 {
-    return undefined;
+
+    var lastMove = this._prevMoveCards[this._prevMoveCards.length-1];
+
+    var cards = undefined;
+
+    if(this._roomRules.indexOf(EIGHTENDERSRULE_ID) != 0)
+        cards = this.getCardsForEightEnders(this._isReverse,lastMove);
+
+    if(cards == undefined && this._roomRules.indexOf(REVOLUTIONRULE) != 0)
+        cards = this.getCardsForEightEnders(this._isReverse,lastMove);
+
+    if(cards == undefined && this._roomRules.indexOf(JACKBACKRULE_ID) != 0)
+        cards = this.getCardsForEightEnders(this._isReverse,lastMove);
+
+    if(cards == undefined)
+        cards = this.getCardsForGeneralRule(this._isReverse, lastMove);
+
+
+
+    return cards;
+
 }
 
 
