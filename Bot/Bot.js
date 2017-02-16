@@ -6,6 +6,9 @@ const KIND_STR = "kind"
 const EIGHTENDERS_KIND = 8;
 const REVOLUTION_NUM_OF_CARDS = 4;
 
+const JACKBACKRULE_ID = "R2";
+const REVOLUTIONRULE = "R4";
+
 function Bot(){
 
     this._userId = undefined;
@@ -14,6 +17,7 @@ function Bot(){
     this._prevMoveCards = [];
     this._jokersCardIndices = [];
     this._roomRules = [];
+    this._isReverse = false;
 }
 
 Bot.prototype.addCards = function addCards(cards)
@@ -41,6 +45,13 @@ Bot.prototype.setPhotoId = function setPhotoId(selectedPhotoIds)
             break;
         }
     }            
+}
+
+
+Bot.prototype.parseMoveRules = function parseMoveRules(rule)
+{
+    if(rule == JACKBACKRULE_ID || rule == REVOLUTIONRULE)
+        this._isReverse = !this._isReverse;
 }
 
 
@@ -242,6 +253,7 @@ Bot.prototype.lastIndexOfObjectWithRank = function lastIndexOfObjectWithRank(obj
 
     // return index;
 }
+
 
 Bot.prototype.getCardsWithQuantityOf = function getCardsWithQuantityOf(sorted, numOfCards)
 {
