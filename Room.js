@@ -173,6 +173,7 @@ Room.prototype.switchTurn = function switchTurn(id){
 	return player;
 }
 
+
 Room.prototype.getNextTurn = function getNextTurn(userId)
 {
 	var	playerWithTurn = this.switchTurn(userId);
@@ -189,6 +190,7 @@ Room.prototype.getNextTurn = function getNextTurn(userId)
 
 	return data;
 }
+
 
 Room.prototype.helper = function helper(userId, func)
 {
@@ -244,10 +246,9 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
     player.clearDealt();
    	player.addDealtCards(data);
 
-   	var extraRules = this._round.checkMoveExtra(player.getDealtCards());
+   	var hasExtraRules = this._round.checkMoveExtra(player.getDealtCards());
     var status = this._round.addMove(false,userId,player.getDealtCards());
-    
-    console.log(extraRules);
+
 
     if(status)
     {
@@ -265,13 +266,12 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
 
     		var sendNextTurnTime = undefined;
 
-    		if(extraRules)
+    		if(hasExtraRules)
     		{
-    			var e = extraRules["now"];
-
     			setTimeout(function(){
 
-    				elem.sendToAll(Constants.RULES_LIST, e)
+    				var rules = elem._round.getNowRules();
+    				elem.sendToAll(Constants.RULES_LIST, rules);
 
     			},2500);
 
@@ -290,6 +290,7 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
   	 	this.sendTo(player.getConn(), Constants.INVALIDMOVE_CODE, {});
     } 
 }
+
 
 Room.prototype.passTurnHandler = function passTurnHandler(userId)
 {
