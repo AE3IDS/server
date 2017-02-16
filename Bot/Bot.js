@@ -321,6 +321,23 @@ Bot.prototype.getCardsForGeneralRule = function getCardsForGeneralRule(reverse, 
 
         return cards[cards.length-1];
     }
+    else
+    {
+        cards = this.getCardsWithQuantityOf(sortedH, prevMove.length);
+
+
+        /* cards could be of zero length since it could be the case
+        bot doesnt have the same amount of cards to be dealt as previous move */
+        
+
+        if(cards.length != 0)
+        {
+            var strongestCards = cards[cards.length-1];
+
+            if (this.areCardsStronger(reverse, strongestCards, prevMove)) 
+                 return strongestCards;
+        }
+    }
 
     return undefined;
 
