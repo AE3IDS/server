@@ -131,8 +131,10 @@ Bot.prototype.getCardsForJackBack = function getCardsForJackBack(reverse, prevMo
     }
     else
     {
-        if(jackCards.length == prevMove.length)
+        if(!(jackCards.length < prevMove.length))
         {
+            jackCards = jackCards.slice(0, prevMove.length);
+
             if(this.areCardsStronger(reverse, jackCards, prevMove))
                 output = jackCards;
         } 
