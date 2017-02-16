@@ -117,18 +117,12 @@ Round.prototype.willStartNewRound = function willStartNewRound()
     return this._startNewRound;
 }
 
+
 Round.prototype.getLaterRules = function getLaterRules()
 {
-    var data = undefined;
-
-    if(this._laterRules.length > 0)
-    {
-        var laterRule = this._laterRules.pop();
-        data = [laterRule];
-    }
-    
-    return data;
+    return this._laterRules;
 }
+
 
 Round.prototype.hasPassedMax = function hasPassedMax()
 {
