@@ -29,6 +29,11 @@ Rule.prototype.getRuleName = function getRuleName()
     return this.ruleName;
 }
 
+Rule.prototype.getJSONInfo = function getJSONInfo()
+{
+	return {"ruleId":this.ruleId,"ruleName":this.ruleName};
+}
+
 Rule.prototype.getRuleDescription = function getRuleDescription()
 {
     return this.description;
