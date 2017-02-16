@@ -374,14 +374,14 @@ Bot.prototype.getTurnCards = function getTurnCards()
 
     var cards = undefined;
 
-    if(this._roomRules.indexOf(EIGHTENDERSRULE_ID) != 0)
+    if(this._roomRules.indexOf(EIGHTENDERSRULE_ID) != -1)
         cards = this.getCardsForEightEnders(this._isReverse,lastMove);
 
-    if(cards == undefined && this._roomRules.indexOf(REVOLUTIONRULE) != 0)
-        cards = this.getCardsForEightEnders(this._isReverse,lastMove);
+    if(cards == undefined && this._roomRules.indexOf(REVOLUTIONRULE) != -1)
+        cards = this.getCardsForRevolution(this._isReverse,lastMove);
 
-    if(cards == undefined && this._roomRules.indexOf(JACKBACKRULE_ID) != 0)
-        cards = this.getCardsForEightEnders(this._isReverse,lastMove);
+    if(cards == undefined && this._roomRules.indexOf(JACKBACKRULE_ID) != -1)
+        cards = this.getCardsForJackBack(this._isReverse,lastMove);
 
     if(cards == undefined)
         cards = this.getCardsForGeneralRule(this._isReverse, lastMove);
