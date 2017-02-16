@@ -159,8 +159,10 @@ Bot.prototype.getCardsForEightEnders = function getCardsForEightEnders(reverse, 
     }
     else
     {
-        if(eightCards.length == prevMove.length)
+        if(!(eightCards.length < prevMove.length))
         {
+            eightCards = eightCards.slice(0,prevMove.length)
+
             if(this.areCardsStronger(reverse, eightCards, prevMove))
                 output = eightCards;
         } 
