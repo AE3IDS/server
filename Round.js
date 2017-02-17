@@ -21,7 +21,7 @@ Round.prototype.addMove = function addMove(isPass, userId, cards)
 
     var currMove = new PlayerMove(isPass,userId,cards);
     var isMoveValid = undefined; //check if zero 
-    var output = undefined;
+    var output = false;
 
 	
     if(this._moves.length != 0)
@@ -53,12 +53,6 @@ Round.prototype.addMove = function addMove(isPass, userId, cards)
         this._moves.push(currMove);
         output = true;
     }
-    else
-    {
-        output = false;
-    }
-
-    // console.log(this._moves.length);
 
     return output;
 }
