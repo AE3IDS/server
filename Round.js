@@ -41,11 +41,9 @@ Round.prototype.addMove = function addMove(isPass, userId, cards)
 
             isMoveValid = currMove.check(this._rules,prevMove, this._movesWithExtraRules);
         }
-        else
-        {
-            this._numOfPass++;
-        }
     }
+
+    this._numOfPass += isPass?1:0;
 
     if(isPass == false && isMoveValid == undefined)
         isMoveValid = currMove.check(this._rules, undefined, this._movesWithExtraRules);
