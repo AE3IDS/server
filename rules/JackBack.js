@@ -8,7 +8,7 @@ function JackBack(){
     var description = "Reverse the strength of cards when any player deals a Jack card";
     var ruleId = "R2";
 
-    Rule.call(this,name,description,ruleId, false);
+    Rule.call(this,name,description,ruleId, false, true);
 }
 
 JackBack.prototype = new Rule();
