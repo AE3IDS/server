@@ -1,5 +1,6 @@
 
 const GENERALRULE_INDEX = 0;
+var underscore = require('underscore');
 
 function PlayerMove(isPass,userId, data)
 {
@@ -8,6 +9,8 @@ function PlayerMove(isPass,userId, data)
     this._data =data;
     this._extraRules = [];
 }
+
+
 
 PlayerMove.prototype.check = function check(rules, prevPlayerMove, movesWithExtraRules)
 {
@@ -42,11 +45,11 @@ PlayerMove.prototype.check = function check(rules, prevPlayerMove, movesWithExtr
         }
     }
 
-    return (this.generalRuleCheck() && this.strengthAndLengthCheck(false,prevPlayerMove));
+    return (this.generalRuleCheck(rules) && this.strengthAndLengthCheck(false,prevPlayerMove));
 }
 
 
-PlayerMove.prototype.generalRuleCheck = function generalRuleCheck()
+PlayerMove.prototype.generalRuleCheck = function generalRuleCheck(rules)
 {
     return rules[GENERALRULE_INDEX].checkCard(this._data);
 }
@@ -122,6 +125,17 @@ PlayerMove.prototype.checkExtraRules = function checkExtraRules(rules)
 
     return output;
 }
+
+
+PlayerMove.prototype.isMoveEqualTo = function isMoveEqualTo(move)
+{
+    var allSameCards = (underscore.isEqual(this._data,move.getCards()));
+    var sameId = (this._userId == move.getUserId());
+    var sameType = (this._isPass == move.isMoveTypePass());
+
+    return (sameId && allSameCards && sameType);
+}
+
 
 PlayerMove.prototype.getExtraRules = function getExtraRules()
 {
