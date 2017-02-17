@@ -8,7 +8,7 @@ function Revolution(){
     var description = "asdfs";
     var ruleId = "R4";
 
-    Rule.call(this,name,description,ruleId, false);
+    Rule.call(this,name,description,ruleId, false, true);
 }
 
 Revolution.prototype = new Rule();

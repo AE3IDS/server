@@ -10,7 +10,7 @@ function JokersAreWild(){
     var description = "asdfs";
     var ruleId = "R3";
 
-    Rule.call(this,name,description,ruleId, true);
+    Rule.call(this,name,description,ruleId, true,false);
 }
 
 JokersAreWild.prototype = new Rule();

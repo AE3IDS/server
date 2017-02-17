@@ -1,11 +1,18 @@
 
-function Rule(name,description,id, active)
+function Rule(name,description,id, active, isPersistent)
 {    
     this.ruleName = name;
     this.description = description;
     this.ruleId = id;
     this._isActive = active;
+    this._isPersistent = isPersistent;
 }
+
+Rule.prototype.isPersistent = function isPersistent()
+{
+    return this._isPersistent;
+}
+
 
 Rule.prototype.isActive = function isActive()
 {
