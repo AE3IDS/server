@@ -22,27 +22,29 @@ Round.prototype.addMove = function addMove(isPass, userId, cards)
     var currMove = new PlayerMove(isPass,userId,cards);
     var isMoveValid = undefined; //check if zero 
     var output = undefined;
-    
+
 	
     if(this._moves.length != 0)
     {
         var prevMove = this._moves[this._moves.length-1];
-        
+
         var curr = currMove.isMoveTypePass();
         var prev = prevMove.isMoveTypePass();
 
-        if(!curr && prev)               // if curr is not pass and prev is Pass
+        if(!curr)
         {
-            this._numOfPass = 0;
-        }
-        else if (!curr && !prev) 
-        {
+            if(prev)
+            {
+                 this._numOfPass = 0;
+                 prevMove = undefined;
+            }
+
             isMoveValid = currMove.check(this._rules,prevMove, this._movesWithExtraRules);
         }
         else
         {
-            this._numOfPass++;          // if q is pass and s is pass &&                        
-        }                               // if q is pass and s is not pass
+            this._numOfPass++;
+        }
     }
 
     if(isPass == false && isMoveValid == undefined)
@@ -151,7 +153,7 @@ Round.prototype.getWinningId = function getWinningId()
 Round.prototype.checkIfReturn = function checkIfReturn(userId)
 {
     var index = this._moves.length - this._passNumMax - 1;
-    
+
     if(index >= 0)
         return (this._moves[index].getUserId() == userId);
     else
