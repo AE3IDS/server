@@ -18,7 +18,7 @@ function Bot(){
     this._photoId = -1;
     this._cards = [];
     this._prevMoveCards = [];
-    this._jokersCardIndices = [];
+    this._jokers = [];
     this._roomRules = [];
     this._isReverse = false;
 }
@@ -26,7 +26,7 @@ function Bot(){
 Bot.prototype.addCards = function addCards(cards)
 {
     this._cards = cards;
-    this.getJokers();
+    this._jokers = this.getJokers();
 
 
 
@@ -79,12 +79,11 @@ Bot.prototype.removeCards = function removeCards(cards)
 {
 
     var temp = [];
+    var removed = [];
 
     for(var j = 0; j < this._cards.length;j++)
     {
         var item = this._cards[j];
-        var isItemInCards = false;
-
 
         var f = cards.filter(function(item1){
 
@@ -101,6 +100,8 @@ Bot.prototype.removeCards = function removeCards(cards)
 
         if(f == 0)
             temp.push(item);
+        else
+            removed.push(item);
     }
 
 
@@ -108,9 +109,9 @@ Bot.prototype.removeCards = function removeCards(cards)
 
     console.log("remove");
     console.log(temp);
-
     this._cards = temp;
 
+    return removed;
 }
 
 
@@ -443,14 +444,13 @@ Bot.prototype.getCardsForGeneralRule = function getCardsForGeneralRule(reverse, 
 
 Bot.prototype.getJokers = function getJokers()
 {
-    var _this = this;
+    var jokers = this._cards.filter(function(item){
+       return item.getSuit() == JOKER_SUIT;
+    });
 
-    var jokerIndex = this._cards.forEach(function(item,index){
+    jokers = this.removeCards(jokers);
 
-        if(item.getSuit() == JOKER_SUIT)
-            _this._jokersCardIndices.push(index);
-
-    })
+    return jokers;
 }
 
 
