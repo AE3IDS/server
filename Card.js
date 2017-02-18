@@ -21,7 +21,7 @@ Card.prototype.getKind = function getKind(){
 }
 
 Card.prototype.isCardEqual = function isCardEqual(card){
-    return ((card.getSuit() == this._suit) && (card.getKind() == this._kind)); 
+    return (card.getKind() == this._kind); 
 }
 
 Card.prototype.isCardStronger = function isCardStronger(card){
