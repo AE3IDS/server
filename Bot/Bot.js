@@ -335,11 +335,11 @@ Bot.prototype.getCardsWithQuantityOf = function getCardsWithQuantityOf(sorted, n
 
         var num = lastIndex - counter + 1;
 
-        if(numOfCards == num)
+        if(!(num < numOfCards))
         {
             // The card/s that has quantity of numOfCards
 
-            var slicedSorted = sorted.slice(counter, lastIndex+1);
+            var slicedSorted = sorted.slice(counter, counter+numOfCards);
 
             var slicedCards = slicedSorted.map(function(item){
                 return _this._cards[item["pos"]]
@@ -405,6 +405,8 @@ Bot.prototype.getCardsForGeneralRule = function getCardsForGeneralRule(reverse, 
         /* cards could be of zero length since it could be the case
         bot doesnt have the same amount of cards to be dealt as previous move */
 
+        console.log("cards");
+        console.log(cards);
 
         if(cards.length != 0)
         {
