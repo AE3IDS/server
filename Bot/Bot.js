@@ -121,8 +121,15 @@ Bot.prototype.areCardsStronger = function areCardsStronger(reverse, cards, prev)
 
     cards.forEach(function(item,index){
 
-        var tempIsLarger = item.isCardStronger(prev[index]);
-        isLarger = (reverse ? !tempIsLarger : tempIsLarger);
+        if(item.isCardEqual(prev[index]))
+        {
+            isLarger = false;
+        }
+        else
+        {
+            var tempIsLarger = item.isCardStronger(prev[index]);
+            isLarger = (reverse ? !tempIsLarger : tempIsLarger);
+        }
 
     })
 
