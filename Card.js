@@ -24,6 +24,11 @@ Card.prototype.isCardEqual = function isCardEqual(card){
     return (card.getKind() == this._kind); 
 }
 
+Card.prototype.isCardZeroRank = function isCardZeroRank()
+{
+	return (this._kind == 0);
+}
+
 Card.prototype.isCardStronger = function isCardStronger(card){
     return this._kind > card.getKind();
 }
