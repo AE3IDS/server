@@ -24,6 +24,11 @@ Rule.prototype.activate = function activate()
 	this._isActive = true;
 }
 
+Rule.prototype.deactivate = function deactivate()
+{
+    this._isActive = false;
+}
+
 Rule.prototype.checkCard = function checkCard(card){}
 
 Rule.prototype.getId = function getId()
