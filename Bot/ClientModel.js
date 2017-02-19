@@ -71,9 +71,18 @@ ClientModel.prototype.parse = function parse(msg)
 		case ClientConstant.RULES_LIST:
 			ruleListHandler(this, data);
 		break;
+
+		case ClientConstant.NEWROUND_CODE:
+			newRoundHandler(this, data);
+		break;
 	}
 }
 
+
+function newRoundHandler(elem,data)
+{
+	elem._bot.clearMoves();
+}
 
 function ruleListHandler(elem, data)
 {
