@@ -21,6 +21,13 @@ describe("EightEndersRuleTest",function(){
     })
 
 
+    it("isPersistent shall return false",function(){
+        
+        var eRule = new EightRule();
+        expect(eRule.isPersistent()).to.equal(false);
+    })
+
+
 
     it("getRuleName should return Eight Enders",function(){
         
