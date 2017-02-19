@@ -72,6 +72,11 @@ Bot.prototype.addRoomRules = function addRoomRules(rules)
     this._roomRules = rules;
 }
 
+Bot.prototype.clearMoves = function clearMoves()
+{
+    this._prevMoveCards.length = 0;
+}
+
 /* ==================== Cards  ========================= */
 
 
