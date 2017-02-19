@@ -21,6 +21,7 @@ function Bot(){
     this._jokers = [];
     this._roomRules = [];
     this._isReverse = false;
+    this._canJoker = false;
 }
 
 Bot.prototype.addCards = function addCards(cards)
@@ -70,6 +71,7 @@ Bot.prototype.parseMoveRules = function parseMoveRules(rule)
 Bot.prototype.addRoomRules = function addRoomRules(rules)
 {
     this._roomRules = rules;
+    this._canJoker = (this._roomRules.indexOF(JOKERAREWILDRULE_ID) != -1)
 }
 
 Bot.prototype.clearMoves = function clearMoves()
