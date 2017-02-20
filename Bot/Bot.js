@@ -1,4 +1,5 @@
 var Chance = require('chance').Chance();
+var Card = require("../Card");
 
 const JOKER_SUIT = 0;
 const JACK_KIND = 11;
@@ -71,7 +72,7 @@ Bot.prototype.parseMoveRules = function parseMoveRules(rule)
 Bot.prototype.addRoomRules = function addRoomRules(rules)
 {
     this._roomRules = rules;
-    this._canJoker = (this._roomRules.indexOF(JOKERAREWILDRULE_ID) != -1)
+    this._canJoker = (this._roomRules.indexOf(JOKERAREWILDRULE_ID) != -1)
 }
 
 Bot.prototype.clearMoves = function clearMoves()
@@ -165,7 +166,13 @@ Bot.prototype.getCardsForJackBack = function getCardsForJackBack(reverse, prevMo
 
     if(!prevMove)
     {
-        output = jackCards.length == 0?output:jackCards; 
+        output = jackCards.length == 0?output:jackCards;
+
+        if(this._canJoker && output)
+        {
+            var jokers = this.deployJokers(undefined,undefined, jackCards);
+            output = output.concat(jokers);
+        } 
     }
     else
     {
@@ -175,7 +182,7 @@ Bot.prototype.getCardsForJackBack = function getCardsForJackBack(reverse, prevMo
 
             if(this.areCardsStronger(reverse, jackCards, prevMove))
                 output = jackCards;
-        } 
+        }
     }
 
 
@@ -458,6 +465,42 @@ Bot.prototype.getJokers = function getJokers()
     jokers = this.removeCards(jokers);
 
     return jokers;
+}
+
+Bot.prototype.deployJokers = function deployJokers(srcLength, dstLength, sampleCards)
+{
+    var sampleCard = sampleCards[sampleCards.length-1];
+
+    var s = [];
+
+    var endCounter = -1;
+
+    /* Determine the number of jokers to deploy */
+
+    if(!(srcLength && dstLength))
+    {
+        endCounter = this._jokers.length;
+    }
+    else
+    {
+        var requiredAmount = dstLength - srcLength;
+
+        if(this._jokers.length >= (requiredAmount))
+            endCounter = requiredAmount;
+    }
+
+    /* deploy jokers */
+
+    if(endCounter != -1)
+    {
+        for(var i = 0; i < endCounter; i++)
+        {
+            var c = new Card(JOKER_SUIT, sampleCard.getKind());
+            s.push(c);
+        }
+    }
+
+    return s;
 }
 
 
