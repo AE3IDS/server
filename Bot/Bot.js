@@ -157,12 +157,12 @@ Bot.prototype.getCardsForJackBack = function getCardsForJackBack(reverse, prevMo
     console.log("check for jack back")
 
 
-
     var output = undefined;
 
     var jackCards = this._cards.filter(function(item){
         return item.getKind() == JACK_KIND;
     })
+
 
     if(!prevMove)
     {
@@ -176,13 +176,7 @@ Bot.prototype.getCardsForJackBack = function getCardsForJackBack(reverse, prevMo
     }
     else
     {
-        if(!(jackCards.length < prevMove.length))
-        {
-            jackCards = jackCards.slice(0, prevMove.length);
-
-            if(this.areCardsStronger(reverse, jackCards, prevMove))
-                output = jackCards;
-        }
+        output = this.deployCards(reverse, prevMove, jackCards);
     }
 
 
@@ -466,6 +460,40 @@ Bot.prototype.getJokers = function getJokers()
 
     return jokers;
 }
+
+
+Bot.prototype.deployCards = function deployCards(reverse, prevCards, currCards)
+{
+
+    var output = undefined;
+
+    // to prevent the bot from playing jokers alone
+
+    if(currCards.length > 0) 
+    {
+        var needJoker = (prevCards.length > currCards.length);
+
+        var endIndex = needJoker?currCards.length:prevCards.length;
+        var dealtCards = currCards.slice(0, endIndex);
+
+
+        if(needJoker)
+        {
+            var jokers = this.deployJokers(currCards.length, prevCards.length,currCards);
+            dealtCards = dealtCards.concat(jokers);
+        }
+
+
+        if(prevCards.length == dealtCards.length)
+        {
+            if(this.areCardsStronger(reverse, dealtCards, prevCards))
+                output = dealtCards;
+        }
+    }
+
+    return output;
+}
+
 
 Bot.prototype.deployJokers = function deployJokers(srcLength, dstLength, sampleCards)
 {
