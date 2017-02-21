@@ -104,9 +104,20 @@ function botRulesHandler(elem, data)
 
 function turnCodeHandler(elem, data)
 {
+	var prevTurnId = data["prevTurnId"];
 	var turnId = data["userId"];
 
-	if(elem._bot.getUserId() == turnId)
+
+	if(prevTurnId && (prevTurnId == elem._bot.getUserId()))
+	{
+		var content = {"userId":elem._bot.getUserId()}
+		var data = makeJSON(ClientConstant.MESSAGESEQ_CODE,content);
+
+		elem._socket.send(data); 
+	}
+
+
+	if(turnId && elem._bot.getUserId() == turnId)
 	{
 
 		setTimeout(function(){
@@ -130,6 +141,7 @@ function turnCodeHandler(elem, data)
 
 		}, 5000)
 	}
+	
 }
 
 
