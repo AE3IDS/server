@@ -141,7 +141,7 @@ function turnCodeHandler(elem, data)
 
 		}, 5000)
 	}
-	
+
 }
 
 
@@ -150,12 +150,25 @@ function moveCodeHandler(elem, data)
 	var cards = parseCards(data);
 
 	if(data["userId"] != elem._bot.getUserId())
+	{
 		elem._bot.addMoveCard(cards);
+	}
 	else
 	{
 		elem._bot.removeCards(cards);
+
+
+		// Send MESSAGESEQ_CODE
+
+		var content = {"userId":elem._bot.getUserId()}
+		var data = makeJSON(ClientConstant.MESSAGESEQ_CODE,content);
+
+		elem._socket.send(data); 
+
+		
 	}
 }
+
 
 function cardCodeHandler(elem, data)
 {
