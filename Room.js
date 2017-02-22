@@ -269,16 +269,7 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
 
     	/* Send the cards of the move */
 
-		var s = new MessageSeq(700, userId, function(){
-
-    		var data = _this.returnPlayerDetails(player);
-    		data["cards"] = player.getDealtCards();
-
-    		_this.sendToAll(Constants.MOVE_CODE, data);
-		})
-
-		this._message.push(s);
-
+		this.sendMoveCards(userId, player);
 
 
 		/* Send rules */
@@ -294,6 +285,22 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
     {
   	 	this.sendTo(player.getConn(), Constants.INVALIDMOVE_CODE, {});
     } 
+}
+
+
+Room.prototype.sendMoveCards = function sendMoveCards(userId, player)
+{
+	var _this = this;
+
+	var move = new MessageSeq(700, userId, function(){
+
+    	var data = _this.returnPlayerDetails(player);
+    	data["cards"] = player.getDealtCards();
+
+    	_this.sendToAll(Constants.MOVE_CODE, data);
+	})
+
+	this._message.push(move);
 }
 
 
