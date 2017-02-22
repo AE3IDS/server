@@ -169,6 +169,14 @@ function requestAvatarsHandler(conn, data, rooms)
 }
 
 
+function messageSeqHandler(data, rooms)
+{
+    var userId = data.data.userId;
+    var room = getRoomForUserId(userId,rooms);
+    room.requestMessage();
+}
+
+
 Game.prototype.handleMessage = function(connection,dt){
 
     var data = JSON.parse(dt);
@@ -222,6 +230,10 @@ Game.prototype.handleMessage = function(connection,dt){
 
         case Constant.BOTRULES_LIST:
             botRulesHandler(connection, data, this._rooms);
+            break;
+
+        case Constant.MESSAGESEQ_CODE:
+            messageSeqHandler(data, this._rooms);
             break;
     }       
 
