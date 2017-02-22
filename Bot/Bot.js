@@ -211,16 +211,16 @@ Bot.prototype.getCardsForEightEnders = function getCardsForEightEnders(reverse, 
     if(!prevMove)
     {
         output = eightCards.length == 0?output:eightCards; 
+
+        if(this._canJoker && output)
+        {
+            var jokers = this.deployJokers(undefined,undefined, eightCards);
+            output = output.concat(jokers);
+        } 
     }
     else
     {
-        if(!(eightCards.length < prevMove.length))
-        {
-            eightCards = eightCards.slice(0,prevMove.length)
-
-            if(this.areCardsStronger(reverse, eightCards, prevMove))
-                output = eightCards;
-        } 
+        output = this.deployCards(reverse, prevMove, eightCards);
     }
 
 
