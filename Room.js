@@ -228,7 +228,7 @@ Room.prototype.getNextTurn = function getNextTurn(userId)
 
 	var nextTurnData = this.returnPlayerDetails(playerWithTurn);
 
-	var s = new MessageSeq(500, userId, function()
+	var s = new MessageSeq(900, userId, function()
 	{
 		_this.sendToAll(Constants.TURN_CODE,nextTurnData);
 	});
@@ -281,25 +281,12 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
 
 
 
-
 		/* Send rules */
 
 		if(hasExtraRules)
 		{
-			var rules = this._round.getNowRules();
-
-			rules.forEach(function(item){
-
-				var rule = new MessageSeq(1300, userId, function()
-				{
-					_this.sendToAll(Constants.RULES_LIST, item);
-				})
-
-				_this._message.push(rule);
-
-			})
+			this.handleNowRules(userId);
 		}
-
 
 		this.getNextTurn(userId);
     }
@@ -307,6 +294,36 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
     {
   	 	this.sendTo(player.getConn(), Constants.INVALIDMOVE_CODE, {});
     } 
+}
+
+
+Room.prototype.handleNowRules = function handleNowRules(userId)
+{
+	var rules = this._round.getNowRules();
+	var _this = this;
+
+	rules.forEach(function(item){
+
+		var rule = new MessageSeq(1300, userId, function()
+		{
+			_this.sendToAll(Constants.RULES_LIST, item);
+		})
+
+		_this._message.push(rule);
+
+	})
+
+
+	if(this._round.willStartNewRound())
+	{
+		var m = new MessageSeq(1000, userId, function()
+		{
+			_this.sendToAll(Constants.NEWROUND_CODE,{});
+			_this._round.reset();
+		})
+
+		_this._message.push(m);
+	}
 }
 
 
