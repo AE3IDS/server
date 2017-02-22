@@ -199,10 +199,34 @@ Room.prototype.requestMessage = function requestMessage(userId)
 }
 
 
-Room.prototype.helper = function helper(userId)
+Room.prototype.getNextTurn = function getNextTurn(userId)
 {
-	var nextTurnData = this.getNextTurn(userId);
+
 	var _this = this;
+	var	playerWithTurn = this.switchTurn(userId);
+
+
+	/* Send DELETEDEALT_CODE if return to player */
+
+	if(this._round.checkIfReturn(playerWithTurn.getUserId()))
+	{
+		var s = new MessageSeq(500, userId, function()
+		{
+			var data1 = {"userId":playerWithTurn.getUserId(),
+						 "caller":userId};
+
+			_this.sendToAll(Constants.DELETEDEALT_CODE,data1)
+		});
+
+		this._message.push(s);
+
+		console.log("return");
+	}
+
+
+	/* send player details of next turn */
+
+	var nextTurnData = this.returnPlayerDetails(playerWithTurn);
 
 	var s = new MessageSeq(500, userId, function()
 	{
@@ -210,22 +234,6 @@ Room.prototype.helper = function helper(userId)
 	});
 
 	this._message.push(s);
-}
-
-
-Room.prototype.getNextTurn = function getNextTurn(userId)
-{
-	var	playerWithTurn = this.switchTurn(userId);
-
-	if(this._round.checkIfReturn(playerWithTurn.getUserId()))
-	{
-		var data1 = {"userId":playerWithTurn.getUserId()};
-		this.sendTo(playerWithTurn.getConn(),Constants.DELETEDEALT_CODE,data1)
-		console.log("return");
-	}
-
-	var data = this.returnPlayerDetails(playerWithTurn);
-	return data;
 
 }
 
@@ -282,7 +290,7 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
 
 			rules.forEach(function(item){
 
-				var rule = new MessageSeq(600, userId, function()
+				var rule = new MessageSeq(1300, userId, function()
 				{
 					_this.sendToAll(Constants.RULES_LIST, item);
 				})
@@ -293,7 +301,7 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
 		}
 
 
-		this.helper(userId);
+		this.getNextTurn(userId);
     }
     else
     {
