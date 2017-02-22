@@ -88,11 +88,7 @@ function ruleListHandler(elem, data)
 {
 	var rules = data["ruleId"]; 
 
-	rules.forEach(function(item){
-
-		elem._bot.parseMoveRules(item);
-
-	})
+	elem._bot.parseMoveRules(rules);
 }
 
 
