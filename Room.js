@@ -9,6 +9,7 @@ var Message = require('./Message');
 var MessageQueue = require('./MessageQueue');
 var Round = require('./Round');
 var BotSpawner = require('./BotSpawner');
+var MessageSeq = require('./MessageSeq');
 
 
 const BOT_MODE = "0";
@@ -38,6 +39,8 @@ function Room(seq, rules, mode){
     this._deck = new Deck();
     this._playerIdWithTurn = undefined;
     this._firstDealt = true;
+    this._message = [];
+
 }
 
 //  Public methods  //
@@ -174,6 +177,39 @@ Room.prototype.switchTurn = function switchTurn(id){
 }
 
 
+Room.prototype.removePlayerCards = function removePlayerCards(targetPlayer, numOfCards)
+{
+	targetPlayer.remove(numOfCards);
+
+	return (targetPlayer.getCardCount() == 0);
+
+}
+
+
+Room.prototype.requestMessage = function requestMessage()
+{
+	if(this._message.length != 0)
+	{
+		var mes = this._message.shift();
+		mes.execute();
+	}
+}
+
+
+Room.prototype.helper = function helper(userId)
+{
+	var nextTurnData = this.getNextTurn(userId);
+	var _this = this;
+
+	var s = new MessageSeq(500, function()
+	{
+		_this.sendToAll(Constants.TURN_CODE,nextTurnData);
+	});
+
+	this._message.push(s);
+}
+
+
 Room.prototype.getNextTurn = function getNextTurn(userId)
 {
 	var	playerWithTurn = this.switchTurn(userId);
@@ -186,51 +222,7 @@ Room.prototype.getNextTurn = function getNextTurn(userId)
 	}
 
 	var data = this.returnPlayerDetails(playerWithTurn);
-	data["prevTurnId"] = userId;
-
 	return data;
-}
-
-
-Room.prototype.helper = function helper(userId, func)
-{
-	var nextTurnData = this.getNextTurn(userId);
-    	
-	// send previous turn data
-
-	var prevTurn = {"prevTurnId":nextTurnData["prevTurnId"]};
-	this.sendToAll(Constants.TURN_CODE,prevTurn);	
-
-	var _this = this;
-
-	setTimeout(function()
-	{
-		var nextTurnHandler = function(data, time){
-
-			var timeoutSendTime = (time == undefined)?2700:time;
-
-			var sendFunction = function(){
-
- 				delete data["prevTurnId"];
- 				_this.sendToAll(Constants.TURN_CODE,data);
-
- 			}
-
-			setTimeout(sendFunction,timeoutSendTime);
-		}
-
-
-		func(_this, nextTurnData, nextTurnHandler);
-
-	},720)
-}
-
-
-Room.prototype.removePlayerCards = function removePlayerCards(targetPlayer, numOfCards)
-{
-	targetPlayer.remove(numOfCards);
-
-	return (targetPlayer.getCardCount() == 0);
 
 }
 
@@ -249,41 +241,56 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
    	var hasExtraRules = this._round.checkMoveExtra(player.getDealtCards());
     var status = this._round.addMove(false,userId,player.getDealtCards());
 
+    var _this = this;
 
     if(status)
     {
-    	this.helper(userId, function(elem, nextTurndata, func)
-    	{
-    		/* Send the cards of the move */
 
-    		var data = elem.returnPlayerDetails(player);
+    	var prevTurn = function()
+    	{
+    		var prevTurn = {"prevTurnId":userId};
+			_this.sendToAll(Constants.TURN_CODE,prevTurn);	
+    	}
+    		
+    	setTimeout(prevTurn, 400);
+
+
+
+    	/* Send the cards of the move */
+
+		var s = new MessageSeq(700, function(){
+
+    		var data = _this.returnPlayerDetails(player);
     		data["cards"] = player.getDealtCards();
 
-    		elem.sendToAll(Constants.MOVE_CODE, data);
+    		_this.sendToAll(Constants.MOVE_CODE, data);
+		})
+
+		this._message.push(s);
 
 
-    		/* Send extra rules that apply */
-
-    		var sendNextTurnTime = undefined;
-
-    		if(hasExtraRules)
-    		{
-    			setTimeout(function(){
-
-    				var rules = elem._round.getNowRules();
-    				elem.sendToAll(Constants.RULES_LIST, rules);
-
-    			},2500);
-
-    			sendNextTurnTime = 5200;
-    		}
 
 
-    		/*Execute function func */
+		/* Send rules */
 
-    		func(nextTurndata, sendNextTurnTime);
+		if(hasExtraRules)
+		{
+			var rules = this._round.getNowRules();
 
-    	});
+			rules.forEach(function(item){
+
+				var rulesMessage = new MessageSeq(600, function()
+				{
+					_this.sendToAll(Constants.RULES_LIST, item);
+				})
+
+				_this._message.push(rulesMessage);
+
+			})
+		}
+
+
+		this.helper(userId);
     }
     else
     {
@@ -316,12 +323,12 @@ Room.prototype.passTurnHandler = function passTurnHandler(userId)
     }
     else
     {
-    	func = function(elem, nextTurnData, func)
-    	{
-    		var data = elem.returnPlayerDetails(player);
-			elem.sendToAll(Constants.PASSTURN_CODE,data);
+       func = function(elem, nextTurnData, func)
+       {
+            	var data = elem.returnPlayerDetails(player);
+        		elem.sendToAll(Constants.PASSTURN_CODE,data);
 			func(nextTurnData);
-    	}
+       }
     }
 
 	this.helper(userId, func);
