@@ -89,6 +89,8 @@ function ruleListHandler(elem, data)
 	var rules = data["ruleId"]; 
 
 	elem._bot.parseMoveRules(rules);
+
+	elem.sendMsgSeq(3500);
 }
 
 
@@ -106,10 +108,7 @@ function turnCodeHandler(elem, data)
 
 	if(prevTurnId && (prevTurnId == elem._bot.getUserId()))
 	{
-		var content = {"userId":elem._bot.getUserId()}
-		var data = makeJSON(ClientConstant.MESSAGESEQ_CODE,content);
-
-		elem._socket.send(data); 
+		elem.sendMsgSeq(0);
 	}
 
 
@@ -152,16 +151,7 @@ function moveCodeHandler(elem, data)
 	else
 	{
 		elem._bot.removeCards(cards);
-
-
-		// Send MESSAGESEQ_CODE
-
-		var content = {"userId":elem._bot.getUserId()}
-		var data = makeJSON(ClientConstant.MESSAGESEQ_CODE,content);
-
-		elem._socket.send(data); 
-
-		
+		elem.sendMsgSeq(0);
 	}
 }
 
@@ -212,6 +202,21 @@ function makeJSON(code, data)
 {
     var data1 = {"code":code,"data":data};
     return JSON.stringify(data1);
+}
+
+
+ClientModel.prototype.sendMsgSeq = function sendMsgSeq(time)
+{
+	var _this = this;
+
+	setTimeout(function()
+	{
+		var content = {"userId":_this._bot.getUserId()}
+		var data = makeJSON(ClientConstant.MESSAGESEQ_CODE,content);
+
+		_this._socket.send(data); 
+	},time);
+
 }
 
 module.exports = ClientModel;
