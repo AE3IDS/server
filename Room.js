@@ -186,12 +186,15 @@ Room.prototype.removePlayerCards = function removePlayerCards(targetPlayer, numO
 }
 
 
-Room.prototype.requestMessage = function requestMessage()
+Room.prototype.requestMessage = function requestMessage(userId)
 {
 	if(this._message.length != 0)
 	{
-		var mes = this._message.shift();
-		mes.execute();
+		if(this._message[0].isOwner(userId))
+		{
+			var mes = this._message.shift();
+			mes.execute();			
+		}
 	}
 }
 
@@ -201,7 +204,7 @@ Room.prototype.helper = function helper(userId)
 	var nextTurnData = this.getNextTurn(userId);
 	var _this = this;
 
-	var s = new MessageSeq(500, function()
+	var s = new MessageSeq(500, userId, function()
 	{
 		_this.sendToAll(Constants.TURN_CODE,nextTurnData);
 	});
@@ -258,7 +261,7 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
 
     	/* Send the cards of the move */
 
-		var s = new MessageSeq(700, function(){
+		var s = new MessageSeq(700, userId, function(){
 
     		var data = _this.returnPlayerDetails(player);
     		data["cards"] = player.getDealtCards();
@@ -279,12 +282,12 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
 
 			rules.forEach(function(item){
 
-				var rulesMessage = new MessageSeq(600, function()
+				var rule = new MessageSeq(600, userId, function()
 				{
 					_this.sendToAll(Constants.RULES_LIST, item);
 				})
 
-				_this._message.push(rulesMessage);
+				_this._message.push(rule);
 
 			})
 		}
