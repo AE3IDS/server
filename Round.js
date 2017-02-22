@@ -8,8 +8,8 @@ function Round(rules, n){
 	this._moves = [];
 	this._passNumMax = n;
     this._movesWithExtraRules = [];
-    this._laterRules = {};
-    this._nowRules = {};
+    this._laterRules = [];
+    this._nowRules = [];
     this._startNewRound = false;
 }
 
@@ -40,6 +40,7 @@ Round.prototype.addMove = function addMove(isPass, userId, cards)
             }
 
             isMoveValid = currMove.check(this._rules,prevMove, this._movesWithExtraRules);
+
         }
     }
 
@@ -70,36 +71,18 @@ Round.prototype.checkMoveExtra = function checkMoveExtra(cards)
         this._startNewRound = output["newRound"];
 
         if(output["now"])
-            this._nowRules = processRules(output["now"]);
+            this._nowRules = output["now"];
 
         if(output["later"])
-            this._laterRules = processRules(output["later"]);
+            this._laterRules = output["later"];
 
         hasRules = true;
-
         this._movesWithExtraRules.push(currMove);
-    }
+    }  
 
     return hasRules;
 }
 
-
-function processRules(rules)
-{
-    var name = [];
-    var id = [];
-
-    rules.forEach(function(item){
-
-        var ruleId = (Object.keys(item)).pop();
-
-        id.push(ruleId);
-        name.push(item[ruleId]);
-
-    });
-
-    return {"ruleName":name,"ruleId":id}
-}
 
 Round.prototype.getNowRules = function getNowRules()
 {
@@ -156,6 +139,7 @@ Round.prototype.reset = function reset()
 {
     this._moves.length = 0;
     this._numOfPass = 0;
+    this._movesWithExtraRules.length = 0;
 }
 
 
