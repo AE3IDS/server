@@ -81,18 +81,17 @@ ClientModel.prototype.parse = function parse(msg)
 		break
 
 		case ClientConstant.PASSTURN_CODE:
-			sendMessageSeq(this, data);
+
+			this.sendMsgSeq(3500);
+
 		break;
 
+		case ClientConstant.ROUNDWIN_CODE:
+			
+			this.sendMsgSeq(3500);
+
+		break;
 	}
-}
-
-function sendMessageSeq(elem, data)
-{
-	var id = data["userId"];
-
-	if(id == elem._bot.getUserId)
-		elem.sendMsgSeq(3500);
 }
 
 
