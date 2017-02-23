@@ -210,7 +210,7 @@ Room.prototype.getNextTurn = function getNextTurn(userId)
 
 	if(this._round.checkIfReturn(playerWithTurn.getUserId()))
 	{
-		var s = new MessageSeq(500, userId, function()
+		var s = new MessageSeq(2500, userId, function()
 		{
 			var data1 = {"userId":playerWithTurn.getUserId(),
 						 "caller":userId};
@@ -344,36 +344,53 @@ Room.prototype.handleNowRules = function handleNowRules(userId)
 Room.prototype.passTurnHandler = function passTurnHandler(userId)
 {
     var player = this.getPlayerWithId(userId); 
+    var _this = this;
 
     this._round.addMove(true,userId,undefined);
-
-    var func = undefined;
+   	this.sendPrevTurn(userId);
 
 
     if(this._round.hasPassedMax())
     {
-    	func = function(elem, nextTurnData, func)
-    	{
-    		var data = {"userId":nextTurnData["userId"],
-    					"photoId":nextTurnData["photoId"]};
 
-    		elem.sendToAll(Constants.ROUNDWIN_CODE,data)
-    		elem.sendNewRound(2500);
+    	/* buffer details of winning player */
 
-    		func(nextTurnData, 5200);
-    	}
+    	var	winningPlayer = _this.switchTurn(userId);
+
+    	var sendWinningPlayer = new MessageSeq(800, userId, function(){
+    		
+    		var data = _this.returnPlayerDetails(winningPlayer);
+    		_this.sendToAll(Constants.ROUNDWIN_CODE,data)
+
+    	});
+
+    	this._message.push(sendWinningPlayer);
+
+    	
+    	/* buffer new round */
+
+    	var newRound = new MessageSeq(1000, winningPlayer.getUserId(), function()
+		{
+			console.log("new round");
+			_this.sendToAll(Constants.NEWROUND_CODE,{});
+			_this._round.reset();
+		})
+
+		this._message.push(newRound);
+
     }
     else
     {
-       func = function(elem, nextTurnData, func)
-       {
-            	var data = elem.returnPlayerDetails(player);
-        		elem.sendToAll(Constants.PASSTURN_CODE,data);
-			func(nextTurnData);
-       }
+    	var passTurn = new MessageSeq(800, userId, function()
+    	{
+    		var data = _this.returnPlayerDetails(player);
+     		_this.sendToAll(Constants.PASSTURN_CODE,data);
+    	});
+
+    	this._message.push(passTurn);
     }
 
-	this.helper(userId, func);
+	this.getNextTurn(userId);
 }
 
 
