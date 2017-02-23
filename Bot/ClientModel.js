@@ -80,8 +80,21 @@ ClientModel.prototype.parse = function parse(msg)
 			deleteCodeHandler(this, data)
 		break
 
+		case ClientConstant.PASSTURN_CODE:
+			sendMessageSeq(this, data);
+		break;
+
 	}
 }
+
+function sendMessageSeq(elem, data)
+{
+	var id = data["userId"];
+
+	if(id == elem._bot.getUserId)
+		elem.sendMsgSeq(3500);
+}
+
 
 function deleteCodeHandler(elem, data)
 {
