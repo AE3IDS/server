@@ -75,6 +75,22 @@ ClientModel.prototype.parse = function parse(msg)
 		case ClientConstant.NEWROUND_CODE:
 			newRoundHandler(this, data);
 		break;
+
+		case ClientConstant.DELETEDEALT_CODE:
+			deleteCodeHandler(this, data)
+		break
+
+	}
+}
+
+function deleteCodeHandler(elem, data)
+{
+	var id = data["caller"]; 
+
+	if(id == elem._bot.getUserId())
+	{
+		console.log("delete");
+		elem.sendMsgSeq(1000);
 	}
 }
 
@@ -82,7 +98,9 @@ ClientModel.prototype.parse = function parse(msg)
 function newRoundHandler(elem,data)
 {
 	elem._bot.clearMoves();
+	elem.sendMsgSeq(3500);
 }
+
 
 function ruleListHandler(elem, data)
 {
