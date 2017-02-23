@@ -254,17 +254,10 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
 
     var _this = this;
 
+
     if(status)
     {
-
-    	var prevTurn = function()
-    	{
-    		var prevTurn = {"prevTurnId":userId};
-			_this.sendToAll(Constants.TURN_CODE,prevTurn);	
-    	}
-    		
-    	setTimeout(prevTurn, 400);
-
+    	this.sendPrevTurn(userId);
 
 
     	/* Send the cards of the move */
@@ -285,6 +278,20 @@ Room.prototype.addPlayerMove = function addPlayerMove(userId, data)
     {
   	 	this.sendTo(player.getConn(), Constants.INVALIDMOVE_CODE, {});
     } 
+}
+
+
+Room.prototype.sendPrevTurn = function sendPrevTurn(userId)
+{
+	var _this = this;
+
+	var prevTurn = function()
+    {
+    	var prevTurn = {"prevTurnId":userId};
+		_this.sendToAll(Constants.TURN_CODE,prevTurn);	
+    }
+    		
+   setTimeout(prevTurn, 400);
 }
 
 
