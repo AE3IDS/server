@@ -405,19 +405,30 @@ Bot.prototype.getCardsForGeneralRule = function getCardsForGeneralRule(reverse, 
             if(cards.length != 0)
                 break;
         } 
-
-
+		
+		var dealtCards = cards[cards.length-1];
+		
+		
+		// Spawn jokers
+		
+        if(this._canJoker)
+        {
+            var jokers = this.deployJokers(undefined,undefined, dealtCards);
+            dealtCards = dealtCards.concat(jokers);
+        }
+		
+		
         /* ------ Logging -------*/
 
         console.log("Move is")
-        console.log(cards[cards.length-1]);
-
-        return cards[cards.length-1];
-
+        console.log(dealtCards); 
+		
+		return dealtCards;
     }
     else
     {
         cards = this.getCardsWithQuantityOf(sortedH, prevMove.length);
+
 
         /* cards could be of zero length since it could be the case
         bot doesnt have the same amount of cards to be dealt as previous move */
@@ -428,18 +439,17 @@ Bot.prototype.getCardsForGeneralRule = function getCardsForGeneralRule(reverse, 
         if(cards.length != 0)
         {
             var strongestCards = reverse?cards[0]:cards[cards.length-1];
-
-            if (this.areCardsStronger(reverse, strongestCards, prevMove))
-            {
-
-                /* ------ Logging -------*/
-
-                console.log("Move is")
-                console.log(cards[cards.length-1]);
-
-                return strongestCards;
-
-            }    
+			
+			strongestCards = this.deployCards(reverse, prevMove, strongestCards);
+			
+			
+			/* ------ Logging -------*/
+			
+            console.log("Move is")
+            console.log(strongestCards);
+			
+			
+			return strongestCards;  
         }
     }
 
