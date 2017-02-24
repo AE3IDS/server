@@ -87,6 +87,9 @@ Round.prototype.checkMoveExtra = function checkMoveExtra(cards)
 
 Round.prototype.getNowRules = function getNowRules()
 {
+    if(this._startNewRound && this._nowRules.length > 1)
+        this._nowRules.shift();
+
     return this._nowRules
 }
 
