@@ -126,21 +126,22 @@ Bot.prototype.removeCards = function removeCards(cards)
 
 Bot.prototype.areCardsStronger = function areCardsStronger(reverse, cards, prev)
 {
-    var isLarger = false;
+    var isLarger = true;
 
-    cards.forEach(function(item,index){
-
-        if(item.isCardEqual(prev[index]))
-        {
-            isLarger = false;
-        }
-        else
-        {
-            var tempIsLarger = item.isCardStronger(prev[index]);
+	for(var counter = 0; (counter < cards.length && isLarger); counter++)
+	{
+		var cardItem = cards[counter];
+		
+		if(cardItem.isCardEqual(prev[counter]))
+		{
+			isLarger = false;
+		}
+		else
+		{
+            var tempIsLarger = cardItem.isCardStronger(prev[counter]);
             isLarger = (reverse ? !tempIsLarger : tempIsLarger);
-        }
-
-    })
+		}
+	}
 
     return isLarger;
 }
