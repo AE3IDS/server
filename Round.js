@@ -44,6 +44,7 @@ Round.prototype.addMove = function addMove(isPass, userId, cards)
         }
     }
 
+
     this._numOfPass += isPass?1:0;
 
     if(isPass == false && isMoveValid == undefined)
@@ -111,7 +112,9 @@ Round.prototype.hasPassedMax = function hasPassedMax()
     if(isMaxPass)
     {
         var index = this._moves.length - this._passNumMax-1;
-        hasWin = !this._moves[index].isMoveTypePass();
+
+        if(index > -1)
+            hasWin = !this._moves[index].isMoveTypePass();
     }
 
     return hasWin;
