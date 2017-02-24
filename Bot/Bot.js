@@ -85,7 +85,20 @@ Bot.prototype.clearMoves = function clearMoves()
 
 Bot.prototype.removeCards = function removeCards(cards)
 {
+	
+	// Remove jokers
+	
+	var numOfJokers = cards.filter(function(item){
+		return item.getSuit() == JOKER_SUIT;
+	}).length;
+	
+	for(var count = 0;count < numOfJokers;count++)
+		this._jokers.shift();
 
+
+	
+	// Remove normal cards
+	
     var temp = [];
     var removed = [];
 
