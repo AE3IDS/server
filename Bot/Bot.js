@@ -440,16 +440,37 @@ Bot.prototype.getCardsForGeneralRule = function getCardsForGeneralRule(reverse, 
     }
     else
     {
+		// Check if the bot has cards, whose quantity matches
+		// that of prevMove
+		
         cards = this.getCardsWithQuantityOf(sortedH, prevMove.length);
 
 
-        /* cards could be of zero length since it could be the case
-        bot doesnt have the same amount of cards to be dealt as previous move */
+		
+		// If the bot has none and canJoker, find the
+		// cards that plus jokers, equal to prevMove
+		
+		var hasNoCards = (cards.length == 0);
+		
+		if(hasNoCards && this._canJoker)
+		{
+			var count = this._jokers.length;
+			var prevLength = prevMove.length;
+			
+			while(count > 0 && hasNoCards)
+			{
+				cards = this.getCardsWithQuantityOf(sortedH, prevLength-count);
+				count--;
+				hasNoCards = (cards.length == 0);		
+			}	
+		}
 
-        console.log("cards");
-        console.log(cards);
 
-        if(cards.length != 0)
+        // 'cards' could be of zero length since it could be the case
+        // the bot doesnt have the cards that are of the same quantity 
+		// the cards of previous move
+
+        if(!hasNoCards)
         {
             var strongestCards = reverse?cards[0]:cards[cards.length-1];
 			
