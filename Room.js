@@ -350,6 +350,20 @@ Room.prototype.passTurnHandler = function passTurnHandler(userId)
    	this.sendPrevTurn(userId);
 
 
+   	/* Send pass turn code */
+
+   	var passTurn = new MessageSeq(800, userId, function()
+    {
+    	var data = _this.returnPlayerDetails(player);
+    	_this.sendToAll(Constants.PASSTURN_CODE,data);
+    });
+
+    this._message.push(passTurn);
+
+
+
+    /* send winning player */
+
     if(this._round.hasPassedMax())
     {
 
@@ -357,7 +371,7 @@ Room.prototype.passTurnHandler = function passTurnHandler(userId)
 
     	var	winningPlayer = _this.switchTurn(userId);
 
-    	var sendWinningPlayer = new MessageSeq(800, userId, function(){
+    	var sendWinningPlayer = new MessageSeq(400, userId, function(){
     		
     		var data = _this.returnPlayerDetails(winningPlayer);
     		_this.sendToAll(Constants.ROUNDWIN_CODE,data)
@@ -369,7 +383,7 @@ Room.prototype.passTurnHandler = function passTurnHandler(userId)
     	
     	/* buffer new round */
 
-    	var newRound = new MessageSeq(1000, winningPlayer.getUserId(), function()
+    	var newRound = new MessageSeq(2200, winningPlayer.getUserId(), function()
 		{
 			console.log("new round");
 			_this.sendToAll(Constants.NEWROUND_CODE,{});
@@ -379,18 +393,8 @@ Room.prototype.passTurnHandler = function passTurnHandler(userId)
 		this._message.push(newRound);
 
     }
-    else
-    {
-    	var passTurn = new MessageSeq(800, userId, function()
-    	{
-    		var data = _this.returnPlayerDetails(player);
-     		_this.sendToAll(Constants.PASSTURN_CODE,data);
-    	});
 
-    	this._message.push(passTurn);
-    }
-
-	this.getNextTurn(userId);
+	this.getNextTurn(winningPlayer.getUserId());
 }
 
 
