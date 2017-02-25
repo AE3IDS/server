@@ -55,6 +55,11 @@ Room.prototype.sendRoomDetails = function sendRoomDetails(connection,code){
     MessageQueue.send(connection,[new Message(code,details)]);
 }
 
+Room.prototype.isMultiplayerRoom = function isMultiplayerRoom()
+{
+	return this._mode == PLAYER_MODE;
+}
+
 Room.prototype.getNumberOfPlayers = function getNumberOfPlayers()
 {
     return this._players.length;
