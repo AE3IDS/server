@@ -70,6 +70,15 @@ Room.prototype.getRoomId = function getRoomId()
     return this._roomId;
 }
 
+Room.prototype.getRules = function getRules()
+{
+	var rulesName = this._rules.map(function(item){
+		return item.getRuleName();
+	});
+	
+	return (rulesName.toString());
+}
+
 Room.prototype.requestAvatars = function requestAvatars(conn)
 {
 	var photoIds = this._players.map(function(item){
