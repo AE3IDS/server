@@ -316,8 +316,13 @@ Room.prototype.sendMoveCards = function sendMoveCards(userId, player)
 	var move = new MessageSeq(700, userId, function(){
 
     	var data = _this.returnPlayerDetails(player);
-    	data["cards"] = player.getDealtCards();
-
+		var dealtCards =  player.getDealtCards();
+		
+		player.remove(dealtCards.length);
+		
+    	data["cards"] = dealtCards;
+		data["qty"] = player.getCardCount();
+		
     	_this.sendToAll(Constants.MOVE_CODE, data);
 	})
 
